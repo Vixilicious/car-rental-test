@@ -1,0 +1,661 @@
+All folders and files so far:
+images/w-lgog-gold.png
+js/app.js (no code yet)
+public/admin.html:
+(no code yet)
+
+public/booking.html:
+
+<section class="booking-section">
+  <!-- This div is shown if the user is not logged in -->
+  <div id="booking-login-required" class="login-required">
+    <div class="login-required-content">
+      <h2 class="login-required-title">Login Required</h2>
+      <p class="login-required-message">
+        You need to be logged in to book a car.
+      </p>
+      <a href="#" data-page="login.html" class="btn login-button"
+        >Go to Login</a
+      >
+    </div>
+  </div>
+
+  <!-- This content is only shown if the user is logged in -->
+  <div id="booking-content" class="booking-content">
+    <div class="booking-header">
+      <h1 class="booking-title">Book Your Car</h1>
+    </div>
+
+    <div class="booking-container">
+      <div class="car-summary">
+        <div class="car-image-container">
+          <img
+            src="images/cars/car1.jpg"
+            alt="Mercedes-Benz E-Class"
+            class="car-image"
+            id="booking-car-image"
+          />
+        </div>
+        <div class="car-info">
+          <h2 class="car-name" id="booking-car-name">Mercedes-Benz</h2>
+          <h3 class="car-model" id="booking-car-model">E-Class</h3>
+          <p class="car-type" id="booking-car-type">Sedan</p>
+          <ul class="car-features">
+            <li class="car-feature1" id="booking-car-feature1">
+              Automatic Transmission
+            </li>
+            <li class="car-feature2" id="booking-car-feature2">4 Passengers</li>
+            <li class="car-feature3" id="booking-car-feature3">
+              Air Conditioning
+            </li>
+          </ul>
+          <p class="car-price" id="booking-car-price">1 999:- per day</p>
+        </div>
+      </div>
+
+      <div class="booking-form-container">
+        <form id="booking-form" class="booking-form">
+          <div class="form-field-group">
+            <label for="booking-start-date" class="form-field-label"
+              >Start Date</label
+            >
+            <input
+              type="date"
+              id="booking-start-date"
+              name="startDate"
+              class="form-field-input"
+              required
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="booking-end-date" class="form-field-label"
+              >End Date</label
+            >
+            <input
+              type="date"
+              id="booking-end-date"
+              name="endDate"
+              class="form-field-input"
+              required
+            />
+          </div>
+
+          <div class="booking-summary">
+            <div class="booking-summary-item">
+              <span class="booking-summary-label">Duration:</span>
+              <span class="booking-summary-value" id="booking-duration"
+                >3 days</span
+              >
+            </div>
+            <div class="booking-summary-item">
+              <span class="booking-summary-label">Daily Rate:</span>
+              <span class="booking-summary-value" id="booking-daily-rate"
+                >1 999:-</span
+              >
+            </div>
+            <div class="booking-summary-item total">
+              <span class="booking-summary-label">Total Price:</span>
+              <span class="booking-summary-value" id="booking-total-price"
+                >5 997:-</span
+              >
+            </div>
+          </div>
+
+          <div class="booking-error-message" id="booking-error">
+            <p class="error-text">Error creating booking. Please try again.</p>
+          </div>
+
+          <div class="booking-actions">
+            <button type="submit" class="btn book-now-button">Book Now</button>
+            <a
+              href="#"
+              data-page="rental.html"
+              class="btn cancel-booking-button"
+              >Cancel</a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+public/home.html:
+
+<section class="hero-section">
+    <h1 class="main-title">Welcome to Wigells Car rentals</h1>
+    <p>Rent your dream car today!</p>
+    <a href="#" data-page="rental.html" class="view-cars-button">View Cars</a>
+  </section>
+  
+public/login.html:
+<section class="login-section">
+    <div class="login-container">
+      <div class="login-header">
+        <h1 class="login-title">Welcome Back</h1>
+        <p class="login-subtitle">Please login to continue</p>
+      </div>
+  
+      <div class="login-error-message">Incorrect username or password.</div>
+  
+      <form id="login-form" class="login-form">
+        <div class="form-field-group">
+          <label for="login-username" class="form-field-label">Username</label>
+          <input
+            type="text"
+            id="login-username"
+            name="username"
+            class="login-field-input"
+            placeholder="Enter your username"
+            required
+          />
+        </div>
+  
+        <div class="form-field-group">
+          <label for="login-password" class="form-field-label">Password</label>
+          <input
+            type="password"
+            id="login-password"
+            name="password"
+            class="form-field-input"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
+  
+        <button type="submit" class="btn login-submit-btn">Login</button>
+      </form>
+  
+      <div class="register-redirect-container">
+        <a href="#" data-page="register.html" class="register-redirect-link"
+          >No account? Register here!</a
+        >
+      </div>
+    </div>
+  </section>
+  
+public/register.html:
+<section class="register-section">
+    <div class="register-container">
+      <div class="register-header">
+        <h1 class="register-title">Create an Account</h1>
+        <p class="register-subtitle">Fill in your details to get started</p>
+      </div>
+  
+      <div class="register-error-message">
+        Error creating account. Please try again.
+      </div>
+  
+      <form id="register-form" class="register-form">
+        <div class="form-field-row">
+          <div class="form-field-group">
+            <label for="register-firstname" class="form-field-label"
+              >First Name</label
+            >
+            <input
+              type="text"
+              id="register-firstname"
+              name="firstName"
+              class="form-field-input"
+              placeholder="Enter your first name"
+              required
+            />
+          </div>
+  
+          <div class="form-field-group">
+            <label for="register-lastname" class="form-field-label"
+              >Last Name</label
+            >
+            <input
+              type="text"
+              id="register-lastname"
+              name="lastName"
+              class="form-field-input"
+              placeholder="Enter your last name"
+              required
+            />
+          </div>
+        </div>
+  
+        <div class="form-field-group">
+          <label for="register-username" class="form-field-label">Username</label>
+          <input
+            type="text"
+            id="register-username"
+            name="username"
+            class="form-field-input"
+            placeholder="Choose a username"
+            required
+          />
+        </div>
+  
+        <div class="form-field-group">
+          <label for="register-phone" class="form-field-label"
+            >Phone Number</label
+          >
+          <input
+            type="tel"
+            id="register-phone"
+            name="phone"
+            class="form-field-input"
+            placeholder="Enter your phone number"
+            required
+          />
+        </div>
+  
+        <div class="form-field-group">
+          <label for="register-email" class="form-field-label">Email</label>
+          <input
+            type="email"
+            id="register-email"
+            name="email"
+            class="form-field-input"
+            placeholder="Enter your email address"
+            required
+          />
+        </div>
+  
+        <div class="form-field-group">
+          <label for="register-password" class="form-field-label">Password</label>
+          <input
+            type="password"
+            id="register-password"
+            name="password"
+            class="form-field-input"
+            placeholder="Create a password"
+            required
+          />
+        </div>
+  
+        <div class="form-field-group">
+          <label for="register-password-confirm" class="form-field-label"
+            >Repeat Password</label
+          >
+          <input
+            type="password"
+            id="register-password-confirm"
+            name="repeatPassword"
+            class="form-field-input"
+            placeholder="Repeat your password"
+            required
+          />
+        </div>
+  
+        <button type="submit" class="btn register-submit-btn">
+          Create Account
+        </button>
+      </form>
+  
+      <div class="login-redirect-container">
+        <a href="#" data-page="login.html" class="login-redirect-link">
+          Already have an account? Login here!
+        </a>
+      </div>
+    </div>
+  </section>
+  
+public/rental.html:
+<section class="rental-section">
+    <div class="rental-header">
+      <h1 class="rental-title">Available Cars</h1>
+    </div>
+  
+    <div class="car-filter-container">
+      <div class="search-box">
+        <input
+          type="text"
+          id="car-search"
+          class="search-input"
+          placeholder="Search cars..."
+        />
+        <button type="button" class="search-button">Search</button>
+      </div>
+  
+      <div class="filter-options">
+        <select id="car-type-filter" class="filter-select">
+          <option value="">All Types</option>
+          <option value="sedan">Sedan</option>
+          <option value="suv">SUV</option>
+          <option value="coupe">Coupe</option>
+          <option value="van">Family van</option>
+          <option value="cabriolet">Cabriolet</option>
+        </select>
+  
+        <select id="sort-by" class="filter-select">
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+        </select>
+      </div>
+    </div>
+  
+    <div class="car-grid">
+      <!-- Example car cards (these would normally be generated dynamically from the API) -->
+      <div class="car-card">
+        <div class="car-image-container">
+          <img
+            src="images/cars/car1.jpg"
+            alt="Mercedes-Benz E-Class"
+            class="car-image"
+          />
+        </div>
+        <div class="car-details">
+          <h2 class="car-name">Mercedes-Benz</h2>
+          <h3 class="car-model">E-Class</h3>
+          <p class="car-type">Sedan</p>
+          <ul class="car-features">
+            <li class="car-feature1">Automatic Transmission</li>
+            <li class="car-feature2">4 Passengers</li>
+            <li class="car-feature3">Air Conditioning</li>
+          </ul>
+          <div class="car-pricing">
+            <p class="car-price">1899:- per day</p>
+            <button class="btn rent-button" data-car-id="1">Rent Now</button>
+          </div>
+        </div>
+      </div>
+  
+      <div class="car-card">
+        <div class="car-image-container">
+          <img src="images/cars/car2.jpg" alt="BMW X5" class="car-image" />
+        </div>
+        <div class="car-details">
+          <h2 class="car-name">BMW</h2>
+          <h3 class="car-model">X5</h3>
+          <p class="car-type">SUV</p>
+          <ul class="car-features">
+            <li class="car-feature1">Automatic Transmission</li>
+            <li class="car-feature2">5 Passengers</li>
+            <li class="car-feature3">Air Conditioning</li>
+          </ul>
+          <div class="car-pricing">
+            <p class="car-price">2999:- per day</p>
+            <button class="btn rent-button" data-car-id="2">Rent Now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Login prompt overlay (initially hidden) -->
+    <div id="login-prompt-rental" class="login-prompt">
+      <div class="login-prompt-content">
+        <h2 class="login-prompt-title">Login Required</h2>
+        <p class="login-prompt-message">
+          You need to be logged in to rent a car.
+        </p>
+        <div class="login-prompt-actions">
+          <a href="#" data-page="login.html" class="btn login-button">Login</a>
+          <button class="btn cancel-button" id="cancel-login">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+public/user.html:
+<section class="user-section">
+    <!-- This div is shown if the user is not logged in -->
+    <div id="user-login-required" class="login-required">
+      <div class="login-required-content">
+        <h2 class="login-required-title">Login Required</h2>
+        <p class="login-required-message">You need to be logged in to view your profile.</p>
+        <a href="#" data-page="login.html" class="btn login-button">Go to Login</a>
+      </div>
+    </div>
+    
+    <!-- This content is only shown if the user is logged in -->
+    <div id="user-profile" class="user-profile">
+      <div class="user-header">
+        <h1 class="user-title">My Pages</h1>
+      </div>
+      
+      <div class="user-content">
+        <div class="user-info">
+          <div class="user-details">
+            <h2 class="user-name">Vixilicious</h2>
+            <p class="user-email">vixilicious@example.com</p>
+            <p class="user-phone">+46 70 123 4567</p>
+            <button class="btn change-profile-button">Change profile info</button>
+          </div>
+        </div>
+        
+        <div class="user-rentals">
+          <h2 class="rentals-title">My Rentals</h2>
+          
+          <!-- If no rentals exist -->
+          <div id="no-rentals-message" class="no-rentals-message">
+            <p>You don't have any rentals yet.</p>
+            <a href="#" data-page="rental.html" class="btn browse-cars-button">Browse Cars</a>
+          </div>
+          
+          <!-- Rental list (shown if rentals exist) -->
+          <div id="rentals-list" class="rentals-list">
+            <!-- Example rental items (these would be generated dynamically from the API) -->
+            <div class="rental-item">
+              <div class="rental-image">
+                <img src="images/cars/car1-small.jpg" alt="Mercedes-Benz E-Class" class="rental-car-image">
+              </div>
+              <div class="rental-info">
+                <h3 class="rental-car-name">Mercedes-Benz E-Class</h3>
+                <div class="rental-details">
+                  <p class="rental-dates">2025-05-10 — 2025-05-13</p>
+                  <p class="rental-duration">3 days</p>
+                  <p class="rental-price">Total: 5 997:-</p>
+                </div>
+              </div>
+              <div class="rental-actions">
+                <button class="btn change-date-button" data-rental-id="101">Change date</button>
+              </div>
+            </div>
+            
+            <div class="rental-item">
+              <div class="rental-image">
+                <img src="images/cars/car2-small.jpg" alt="BMW X5" class="rental-car-image">
+              </div>
+              <div class="rental-info">
+                <h3 class="rental-car-name">BMW X5</h3>
+                <div class="rental-details">
+                  <p class="rental-dates">2025-04-15 — 2025-04-18</p>
+                  <p class="rental-duration">3 days</p>
+                  <p class="rental-price">Total: 8 997:-</p>
+                </div>
+              </div>
+              <div class="rental-actions">
+                <button class="btn change-date-button" data-rental-id="102">Change date</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Change Date Modal (initially hidden) -->
+    <div id="change-date-modal" class="change-date-modal">
+      <div class="change-date-content">
+        <div class="change-date-header">
+          <h2 class="change-date-title">Change Rental Dates</h2>
+          <button class="close-modal-button">&times;</button>
+        </div>
+        <div class="change-date-body">
+          <div class="car-info">
+            <h3 class="car-name" id="change-date-car-name">Mercedes-Benz E-Class</h3>
+            <p class="car-price" id="change-date-car-price">1 999:- per day</p>
+          </div>
+          <form id="change-date-form" class="change-date-form">
+            <div class="form-field-group">
+              <label for="rental-start-date" class="form-field-label">Start Date</label>
+              <input 
+                type="date" 
+                id="rental-start-date" 
+                name="startDate" 
+                class="form-field-input" 
+                required
+              />
+            </div>
+            
+            <div class="form-field-group">
+              <label for="rental-end-date" class="form-field-label">End Date</label>
+              <input 
+                type="date" 
+                id="rental-end-date" 
+                name="endDate" 
+                class="form-field-input" 
+                required
+              />
+            </div>
+            
+            <div class="rental-summary">
+              <p>Duration: <span id="rental-duration">3</span> days</p>
+              <p>New Total: <span id="rental-total-price">5 997:-</span></p>
+            </div>
+            
+            <div class="change-date-error-message" id="change-date-error">
+              <p class="error-text">Error updating rental dates. Please try again.</p>
+            </div>
+          </form>
+        </div>
+        <div class="change-date-footer">
+          <button class="btn save-button" type="submit" form="change-date-form">Save Changes</button>
+          <button class="btn cancel-button" id="cancel-change-date">Cancel</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Change Profile Modal (initially hidden) -->
+    <div id="change-profile-modal" class="change-profile-modal">
+      <div class="change-profile-content">
+        <div class="change-profile-header">
+          <h2 class="change-profile-title">Change Profile Information</h2>
+          <button class="close-modal-button">&times;</button>
+        </div>
+        <div class="change-profile-body">
+          <form id="change-profile-form" class="change-profile-form">
+            <div class="form-field-group">
+              <label for="edit-email" class="form-field-label">Email</label>
+              <input 
+                type="email" 
+                id="edit-email" 
+                name="email" 
+                class="form-field-input" 
+                placeholder="Enter your email address" 
+                value="vixilicious@example.com"
+                required
+              />
+            </div>
+            
+            <div class="form-field-group">
+              <label for="edit-phone" class="form-field-label">Phone Number</label>
+              <input 
+                type="tel" 
+                id="edit-phone" 
+                name="phone" 
+                class="form-field-input" 
+                placeholder="Enter your phone number" 
+                value="+46 70 123 4567"
+                required
+              />
+            </div>
+            
+            <div class="form-field-group">
+              <label for="edit-current-password" class="form-field-label">Current Password</label>
+              <input 
+                type="password" 
+                id="edit-current-password" 
+                name="currentPassword" 
+                class="form-field-input" 
+                placeholder="Enter your current password" 
+                required
+              />
+            </div>
+            
+            <div class="form-field-group">
+              <label for="edit-new-password" class="form-field-label">New Password (Optional)</label>
+              <input 
+                type="password" 
+                id="edit-new-password" 
+                name="newPassword" 
+                class="form-field-input" 
+                placeholder="Enter a new password (leave blank to keep current)" 
+              />
+            </div>
+            
+            <div class="form-field-group">
+              <label for="edit-confirm-password" class="form-field-label">Confirm New Password</label>
+              <input 
+                type="password" 
+                id="edit-confirm-password" 
+                name="confirmPassword" 
+                class="form-field-input" 
+                placeholder="Confirm your new password" 
+              />
+            </div>
+            
+            <div class="change-profile-error-message" id="change-profile-error">
+              <p class="error-text">Error updating profile. Please try again.</p>
+            </div>
+          </form>
+        </div>
+        <div class="change-profile-footer">
+          <button class="btn save-button" type="submit" form="change-profile-form">Save Changes</button>
+          <button class="btn cancel-button" id="cancel-change-profile">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+styles/style.css:
+(no code yet)
+
+index.html:
+
+  <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <aside id="sidebar">
+      <nav class="sidebar-nav">
+        <div class="nav-logo-container">
+          <img
+            src="/images/w-logo-gold.png"
+            alt="Wigell logo"
+            class="nav-logo"
+          />
+        </div>
+        <ul class="nav-links">
+          <li class="nav-item">
+            <a href="#" data-page="index.html" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" data-page="rental.html" class="nav-link">Rental</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" data-page="login.html" class="nav-link" id="login-link"
+              >Login</a
+            >
+          </li>
+          <li class="nav-item">
+            <a href="#" data-page="user.html" class="nav-link">My pages</a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+    <main class="main-content">
+      <section class="hero-section">
+        <h1 class="main-title">Welcome to Wigells Car rentals</h1>
+        <p>Rent your dream car today!</p>
+        <a href="rental.html">View Cars</a>
+      </section>
+    </main>
+    <footer>
+      <div class="footer-content">
+        <p class="copyright">Copyright &copy; 2023 Wigell Concernens AB</p>
+        <p class="rights">All rights reserved</p>
+      </div>
+    </footer>
+  </body>
+</html>

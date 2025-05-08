@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wigell Car Rentals</title>
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Sidebar Navigation -->
+      <button
+        class="menu-toggle sidebar-toggle"
+        aria-label="Toggle navigation menu"
+      >
+        <span></span>
+      </button>
+      <div class="sidebar-overlay"></div>
+      <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+          <img
+            src="images/w-logo-car.png"
+            alt="Wigell logo"
+            class="sidebar-logo"
+          />
+          <!-- <h1 class="sidebar-title">Wigell</h1> -->
+        </div>
+
+        <nav class="sidebar-nav">
+          <ul class="nav-links">
+            <li class="nav-item">
+              <a href="#" data-page="home.html" class="nav-link active">
+                Home
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" data-page="rental.html" class="nav-link"> Cars </a>
+            </li>
+            <!-- Login link (shown when logged out) -->
+            <li class="nav-item" id="login-nav-item">
+              <a href="#" data-page="login.html" class="nav-link"> Login </a>
+            </li>
+            <!-- My Pages link (shown for regular users) -->
+            <li class="nav-item" id="my-pages-nav-item" style="display: none">
+              <a href="#" data-page="user.html" class="nav-link">
+                My Account
+              </a>
+            </li>
+            <!-- Controller link (shown for admin users) -->
+            <li class="nav-item" id="admin-nav-item" style="display: none">
+              <a href="#" data-page="admin.html" class="nav-link">
+                Admin Page
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div id="user-welcome" class="user-welcome" style="display: none">
+            Welcome, Guest
+          </div>
+          <div id="logout-btn" style="display: none">
+            <a href="#" class="logout-link">Logout</a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <div class="content-wrapper">
+        <main class="main-content">
+          <!-- Dynamic content loaded via JavaScript -->
+          <div id="content-container"></div>
+        </main>
+
+        <footer class="footer">
+          <div class="footer-container">
+            <div class="footer-content">
+              <p class="copyright">
+                Copyright &copy; 2025 Wigell Concernens AB
+              </p>
+              <p class="contact">
+                Email: info@wigellcars.se | Phone: +46 8 123 456
+              </p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Load JavaScript modules -->
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script src="js/rental.js"></script>
+    <script src="js/booking.js"></script>
+    <script src="js/user.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,114 @@
+<section class="booking-section">
+  <!-- This div is shown if the user is not logged in -->
+  <div id="booking-login-required" class="login-required">
+    <div class="login-required-content">
+      <h2 class="login-required-title">Login Required</h2>
+      <p class="login-required-message">
+        You need to be logged in to book a car.
+      </p>
+      <a href="#" data-page="login.html" class="btn login-button"
+        >Go to Login</a
+      >
+    </div>
+  </div>
+
+  <!-- This content is only shown if the user is logged in -->
+  <div id="booking-content" class="booking-content">
+    <div class="booking-header">
+      <h1 class="booking-title">Book Your Car</h1>
+    </div>
+
+    <div class="booking-container">
+      <div class="car-summary">
+        <div class="car-image-container">
+          <img
+            src="images/cars/car1.jpg"
+            alt="Mercedes-Benz E-Class"
+            class="car-image"
+            id="booking-car-image"
+          />
+        </div>
+        <div class="car-info">
+          <h2 class="car-name" id="booking-car-name">Mercedes-Benz</h2>
+          <h3 class="car-model" id="booking-car-model">E-Class</h3>
+          <p class="car-type" id="booking-car-type">Sedan</p>
+          <ul class="car-features">
+            <li class="car-feature1" id="booking-car-feature1">
+              Automatic Transmission
+            </li>
+            <li class="car-feature2" id="booking-car-feature2">4 Passengers</li>
+            <li class="car-feature3" id="booking-car-feature3">
+              Air Conditioning
+            </li>
+          </ul>
+          <p class="car-price" id="booking-car-price">1 999:- per day</p>
+        </div>
+      </div>
+
+      <div class="booking-form-container">
+        <form id="booking-form" class="booking-form">
+          <div class="form-field-group">
+            <label for="booking-start-date" class="form-field-label"
+              >Start Date</label
+            >
+            <input
+              type="date"
+              id="booking-start-date"
+              name="startDate"
+              class="form-field-input"
+              required
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="booking-end-date" class="form-field-label"
+              >End Date</label
+            >
+            <input
+              type="date"
+              id="booking-end-date"
+              name="endDate"
+              class="form-field-input"
+              required
+            />
+          </div>
+
+          <div class="booking-summary">
+            <div class="booking-summary-item">
+              <span class="booking-summary-label">Duration:</span>
+              <span class="booking-summary-value" id="booking-duration"
+                >3 days</span
+              >
+            </div>
+            <div class="booking-summary-item">
+              <span class="booking-summary-label">Daily Rate:</span>
+              <span class="booking-summary-value" id="booking-daily-rate"
+                >1 999:-</span
+              >
+            </div>
+            <div class="booking-summary-item total">
+              <span class="booking-summary-label">Total Price:</span>
+              <span class="booking-summary-value" id="booking-total-price"
+                >5 997:-</span
+              >
+            </div>
+          </div>
+
+          <div class="booking-error-message" id="booking-error">
+            <p class="error-text">Error creating booking. Please try again.</p>
+          </div>
+
+          <div class="booking-actions">
+            <button type="submit" class="btn book-now-button">Book Now</button>
+            <a
+              href="#"
+              data-page="rental.html"
+              class="btn cancel-booking-button"
+              >Cancel</a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

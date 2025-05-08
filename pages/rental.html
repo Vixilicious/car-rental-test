@@ -1,0 +1,94 @@
+<section class="rental-section">
+  <div class="rental-header">
+    <h1 class="rental-title">Available Cars</h1>
+  </div>
+
+  <div class="car-filter-container">
+    <div class="search-box">
+      <input
+        type="text"
+        id="car-search"
+        class="search-input"
+        placeholder="Search cars..."
+      />
+      <button type="button" class="search-button">Search</button>
+    </div>
+
+    <div class="filter-options">
+      <select id="car-type-filter" class="filter-select">
+        <option value="">All Types</option>
+        <option value="sedan">Sedan</option>
+        <option value="suv">SUV</option>
+        <option value="coupe">Coupe</option>
+        <option value="van">Family van</option>
+        <option value="cabriolet">Cabriolet</option>
+      </select>
+
+      <select id="sort-by" class="filter-select">
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="car-grid">
+    <!-- Example car cards (these would normally be generated dynamically from the API) -->
+    <div class="car-card">
+      <div class="car-image-container">
+        <img
+          src="images/cars/car1.jpg"
+          alt="Mercedes-Benz E-Class"
+          class="car-image"
+        />
+      </div>
+      <div class="car-details">
+        <h2 class="car-name">Mercedes-Benz</h2>
+        <h3 class="car-model">E-Class</h3>
+        <p class="car-type">Sedan</p>
+        <ul class="car-features">
+          <li class="car-feature1">Automatic Transmission</li>
+          <li class="car-feature2">4 Passengers</li>
+          <li class="car-feature3">Air Conditioning</li>
+        </ul>
+        <div class="car-pricing">
+          <p class="car-price">1899:- per day</p>
+          <button class="btn rent-button" data-car-id="1">Rent Now</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="car-card">
+      <div class="car-image-container">
+        <img src="images/cars/car2.jpg" alt="BMW X5" class="car-image" />
+      </div>
+      <div class="car-details">
+        <h2 class="car-name">BMW</h2>
+        <h3 class="car-model">X5</h3>
+        <p class="car-type">SUV</p>
+        <ul class="car-features">
+          <li class="car-feature1">Automatic Transmission</li>
+          <li class="car-feature2">5 Passengers</li>
+          <li class="car-feature3">Air Conditioning</li>
+        </ul>
+        <div class="car-pricing">
+          <p class="car-price">2999:- per day</p>
+          <button class="btn rent-button" data-car-id="2">Rent Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login prompt overlay (initially hidden) -->
+  <div id="login-prompt-rental" class="login-prompt">
+    <div class="login-prompt-content">
+      <h2 class="login-prompt-title">Login Required</h2>
+      <p class="login-prompt-message">
+        You need to be logged in to rent a car.
+      </p>
+      <div class="login-prompt-actions">
+        <a href="#" data-page="login.html" class="btn login-button">Login</a>
+        <button class="btn cancel-button" id="cancel-login">Cancel</button>
+      </div>
+    </div>
+  </div>
+</section>

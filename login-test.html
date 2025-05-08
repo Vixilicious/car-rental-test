@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comprehensive Login Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .container {
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      textarea {
+        min-height: 100px;
+        font-family: monospace;
+      }
+      .btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 5px;
+        margin-bottom: 5px;
+      }
+      .btn:hover {
+        background-color: #0069d9;
+      }
+      .debug-log {
+        height: 300px;
+        overflow-y: auto;
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        font-family: monospace;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+      .panel {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f0f0f0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .tabs {
+        display: flex;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #ddd;
+      }
+      .tab {
+        padding: 10px 15px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        border-bottom: none;
+        border-radius: 4px 4px 0 0;
+        background-color: #f8f9fa;
+        margin-right: 5px;
+      }
+      .tab.active {
+        background-color: #fff;
+        border-color: #ddd;
+        margin-bottom: -1px;
+      }
+      .tab-content {
+        display: none;
+        padding: 15px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-top: none;
+        border-radius: 0 0 4px 4px;
+      }
+      .tab-content.active {
+        display: block;
+      }
+      .response-details {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #eef;
+        border: 1px solid #ccf;
+        display: none;
+      }
+      .error {
+        color: #dc3545;
+        font-weight: bold;
+      }
+      .success {
+        color: #28a745;
+        font-weight: bold;
+      }
+      code {
+        font-family: monospace;
+        background-color: #f8f9fa;
+        padding: 2px 4px;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Comprehensive Login Test</h1>
+        <div>
+          <button id="detect-env-btn" class="btn">Detect Environment</button>
+          <button
+            id="clear-log-btn"
+            class="btn"
+            style="background-color: #6c757d"
+          >
+            Clear Log
+          </button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" data-tab="login-test">Login Test</div>
+        <div class="tab" data-tab="api-explorer">API Explorer</div>
+        <div class="tab" data-tab="auth-state">Auth State</div>
+        <div class="tab" data-tab="network-tools">Network Tools</div>
+      </div>
+
+      <div id="login-test" class="tab-content active">
+        <h2>Login Test</h2>
+
+        <div class="form-group">
+          <label for="base-url">API Base URL</label>
+          <input
+            type="text"
+            id="base-url"
+            value="http://localhost:8080/api/v1"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="login-endpoint">Login Endpoint</label>
+          <input type="text" id="login-endpoint" value="/auth/login" />
+          <small style="display: block; margin-top: 3px; color: #6c757d">
+            Will be appended to the API Base URL
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="http-method">HTTP Method</label>
+          <select id="http-method">
+            <option value="POST">POST</option>
+            <option value="GET">GET</option>
+            <option value="PUT">PUT</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="content-type">Content-Type</label>
+          <select id="content-type">
+            <option value="application/json">application/json</option>
+            <option value="application/x-www-form-urlencoded">
+              application/x-www-form-urlencoded
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="credentials">Include Credentials</label>
+          <select id="credentials">
+            <option value="include">include</option>
+            <option value="same-origin">same-origin</option>
+            <option value="omit">omit</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" value="vixilicious" />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" />
+        </div>
+
+        <div class="form-group">
+          <label for="request-body-format">Request Body Format</label>
+          <select id="request-body-format">
+            <option value="json">JSON Object</option>
+            <option value="urlencoded">URL Encoded</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="custom-body-group" style="display: none">
+          <label for="custom-body">Custom Request Body</label>
+          <textarea id="custom-body">
+{"username":"vixilicious","password":"yourpassword"}</textarea
+          >
+        </div>
+
+        <button id="login-btn" class="btn">Test Login</button>
+
+        <div id="response-details" class="response-details">
+          <h3>Response Details</h3>
+          <div id="response-status"></div>
+          <div id="response-headers"></div>
+          <div id="response-body"></div>
+        </div>
+      </div>
+
+      <div id="api-explorer" class="tab-content">
+        <h2>API Explorer</h2>
+
+        <div class="form-group">
+          <label for="api-endpoint">API Endpoint</label>
+          <input type="text" id="api-endpoint" value="/cars" />
+          <small style="display: block; margin-top: 3px; color: #6c757d">
+            Will be appended to the API Base URL
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="api-method">HTTP Method</label>
+          <select id="api-method">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+          </select>
+        </div>
+
+        <button id="test-api-btn" class="btn">Test API Endpoint</button>
+
+        <div id="api-response-details" class="response-details">
+          <h3>API Response Details</h3>
+          <div id="api-response-status"></div>
+          <div id="api-response-body"></div>
+        </div>
+      </div>
+
+      <div id="auth-state" class="tab-content">
+        <h2>Authentication State</h2>
+
+        <div class="panel">
+          <h3>LocalStorage</h3>
+          <div id="local-storage-content"></div>
+          <button id="update-storage-btn" class="btn">Refresh</button>
+          <button id="clear-storage-btn" class="btn">Clear LocalStorage</button>
+        </div>
+
+        <div class="panel">
+          <h3>Cookies</h3>
+          <div id="cookies-content"></div>
+          <button id="update-cookies-btn" class="btn">Refresh</button>
+          <button id="clear-cookies-btn" class="btn">Clear Cookies</button>
+        </div>
+      </div>
+
+      <div id="network-tools" class="tab-content">
+        <h2>Network Tools</h2>
+
+        <div class="panel">
+          <h3>CORS Test</h3>
+          <button id="test-cors-btn" class="btn">Test CORS</button>
+          <div id="cors-results"></div>
+        </div>
+
+        <div class="panel">
+          <h3>HTTP Options Test</h3>
+          <div class="form-group">
+            <label for="options-endpoint">Endpoint to Test</label>
+            <input type="text" id="options-endpoint" value="/auth/login" />
+          </div>
+          <button id="test-options-btn" class="btn">Test OPTIONS</button>
+          <div id="options-results"></div>
+        </div>
+      </div>
+
+      <h2>Debug Log</h2>
+      <div id="debug-log" class="debug-log"></div>
+    </div>
+
+    <script>
+      // Utility functions
+      function log(message, isError = false) {
+        const logElement = document.getElementById("debug-log");
+        const timestamp = new Date().toLocaleTimeString();
+
+        let formattedMessage;
+        if (typeof message === "object") {
+          try {
+            formattedMessage = JSON.stringify(message, null, 2);
+          } catch (e) {
+            formattedMessage = "Object could not be stringified: " + e.message;
+          }
+        } else {
+          formattedMessage = message;
+        }
+
+        const logEntry = document.createElement("div");
+        logEntry.textContent = `[${timestamp}] ${formattedMessage}`;
+
+        if (isError) {
+          logEntry.classList.add("error");
+        }
+
+        logElement.appendChild(logEntry);
+        logElement.scrollTop = logElement.scrollHeight;
+      }
+
+      function getBaseUrl() {
+        return document.getElementById("base-url").value.trim();
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Tab navigation
+      function setupTabs() {
+        const tabs = document.querySelectorAll(".tab");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", function () {
+            // Remove active class from all tabs
+            tabs.forEach((t) => t.classList.remove("active"));
+
+            // Add active class to clicked tab
+            this.classList.add("active");
+
+            // Hide all tab contents
+            tabContents.forEach((content) =>
+              content.classList.remove("active")
+            );
+
+            // Show the corresponding tab content
+            const tabId = this.getAttribute("data-tab");
+            document.getElementById(tabId).classList.add("active");
+          });
+        });
+      }
+
+      // Login test functions
+      async function testLogin() {
+        const baseUrl = getBaseUrl();
+        const endpoint = document.getElementById("login-endpoint").value.trim();
+        const url = `${baseUrl}${endpoint}`;
+        const method = document.getElementById("http-method").value;
+        const contentType = document.getElementById("content-type").value;
+        const credentials = document.getElementById("credentials").value;
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const bodyFormat = document.getElementById("request-body-format").value;
+
+        log(`Testing login at: ${url}`);
+        log(`Method: ${method}`);
+        log(`Content-Type: ${contentType}`);
+        log(`Credentials: ${credentials}`);
+        log(`Username: ${username}`);
+        log(`Password: ${"*".repeat(password.length)}`);
+        log(`Body Format: ${bodyFormat}`);
+
+        let requestBody;
+        let requestHeaders = {
+          "Content-Type": contentType,
+        };
+
+        // Prepare request body based on selected format and method
+        if (method === "POST" || method === "PUT") {
+          if (bodyFormat === "json") {
+            requestBody = JSON.stringify({
+              username: username,
+              password: password,
+            });
+            log(`Request Body: ${requestBody}`);
+          } else if (bodyFormat === "urlencoded") {
+            requestBody = `username=${encodeURIComponent(
+              username
+            )}&password=${encodeURIComponent(password)}`;
+            log(`Request Body: ${requestBody}`);
+          } else if (bodyFormat === "custom") {
+            requestBody = document.getElementById("custom-body").value;
+            log(`Request Body: ${requestBody}`);
+          }
+        } else if (method === "GET") {
+          // For GET, append params to URL
+          url += `?username=${encodeURIComponent(
+            username
+          )}&password=${encodeURIComponent(password)}`;
+          log(`URL with parameters: ${url}`);
+        }
+
+        try {
+          const options = {
+            method: method,
+            headers: requestHeaders,
+            credentials: credentials,
+          };
+
+          // Add body for non-GET requests
+          if (method !== "GET" && requestBody) {
+            options.body = requestBody;
+          }
+
+          log("Sending request...");
+
+          const response = await fetch(url, options);
+
+          log(`Response status: ${response.status} ${response.statusText}`);
+
+          // Get response headers
+          const responseHeaders = {};
+          response.headers.forEach((value, key) => {
+            responseHeaders[key] = value;
+          });
+          log("Response headers:", responseHeaders);
+
+          // Get response body
+          const responseText = await response.text();
+          log(`Response body: ${responseText}`);
+
+          // Display response details in the UI
+          const responseDetails = document.getElementById("response-details");
+          responseDetails.style.display = "block";
+
+          // Status
+          const statusElement = document.getElementById("response-status");
+          statusElement.innerHTML = `<strong>Status:</strong> <span class="${
+            response.ok ? "success" : "error"
+          }">${response.status} ${response.statusText}</span>`;
+
+          // Headers
+          const headersElement = document.getElementById("response-headers");
+          let headersHtml = "<strong>Headers:</strong><br>";
+          for (const [key, value] of Object.entries(responseHeaders)) {
+            headersHtml += `<code>${key}</code>: ${escapeHtml(value)}<br>`;
+          }
+          headersElement.innerHTML = headersHtml;
+
+          // Body
+          const bodyElement = document.getElementById("response-body");
+          bodyElement.innerHTML = `<strong>Body:</strong><br><pre>${escapeHtml(
+            responseText
+          )}</pre>`;
+
+          // If login successful, store auth data
+          if (response.ok) {
+            try {
+              const data = JSON.parse(responseText);
+              log("Login successful!");
+
+              // Store in localStorage
+              localStorage.setItem("isLoggedIn", "true");
+              localStorage.setItem("username", username);
+              localStorage.setItem("isAdmin", data.isAdmin ? "true" : "false");
+              localStorage.setItem("auth", "session");
+
+              log("Auth data stored in localStorage");
+              updateStorageDisplay();
+              updateCookiesDisplay();
+            } catch (e) {
+              log(`Error parsing response as JSON: ${e.message}`, true);
+            }
+          } else {
+            log("Login failed!", true);
+          }
+        } catch (error) {
+          log(`Error during login request: ${error.message}`, true);
+
+          // Display error in response details
+          const responseDetails = document.getElementById("response-details");
+          responseDetails.style.display = "block";
+
+          document.getElementById(
+            "response-status"
+          ).innerHTML = `<strong>Status:</strong> <span class="error">Error</span>`;
+          document.getElementById("response-headers").innerHTML =
+            "<strong>Headers:</strong> N/A";
+          document.getElementById(
+            "response-body"
+          ).innerHTML = `<strong>Error:</strong><br><pre class="error">${escapeHtml(
+            error.message
+          )}</pre>`;
+
+          if (error.message.includes("CORS")) {
+            log(
+              "This appears to be a CORS error. Your server may not allow requests from this origin.",
+              true
+            );
+            log(`Current origin: ${window.location.origin}`, true);
+          }
+        }
+      }
+
+      // API Explorer functions
+      async function testApiEndpoint() {
+        const baseUrl = getBaseUrl();
+        const endpoint = document.getElementById("api-endpoint").value.trim();
+        const url = `${baseUrl}${endpoint}`;
+        const method = document.getElementById("api-method").value;
+
+        log(`Testing API endpoint: ${url}`);
+        log(`Method: ${method}`);
+
+        try {
+          const response = await fetch(url, {
+            method: method,
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          });
+
+          log(`API response status: ${response.status} ${response.statusText}`);
+
+          const responseText = await response.text();
+          log(
+            `API response body: ${
+              responseText.length > 200
+                ? responseText.substring(0, 200) + "..."
+                : responseText
+            }`
+          );
+
+          // Display response details
+          const responseDetails = document.getElementById(
+            "api-response-details"
+          );
+          responseDetails.style.display = "block";
+
+          // Status
+          document.getElementById(
+            "api-response-status"
+          ).innerHTML = `<strong>Status:</strong> <span class="${
+            response.ok ? "success" : "error"
+          }">${response.status} ${response.statusText}</span>`;
+
+          // Body
+          document.getElementById(
+            "api-response-body"
+          ).innerHTML = `<strong>Body:</strong><br><pre>${escapeHtml(
+            responseText
+          )}</pre>`;
+        } catch (error) {
+          log(`Error testing API endpoint: ${error.message}`, true);
+
+          // Display error
+          const responseDetails = document.getElementById(
+            "api-response-details"
+          );
+          responseDetails.style.display = "block";
+
+          document.getElementById(
+            "api-response-status"
+          ).innerHTML = `<strong>Status:</strong> <span class="error">Error</span>`;
+          document.getElementById(
+            "api-response-body"
+          ).innerHTML = `<strong>Error:</strong><br><pre class="error">${escapeHtml(
+            error.message
+          )}</pre>`;
+        }
+      }
+
+      // Auth State functions
+      function updateStorageDisplay() {
+        const storageElement = document.getElementById("local-storage-content");
+        let html = '<table style="width:100%; border-collapse: collapse;">';
+        html +=
+          '<tr><th style="text-align:left; padding:5px; border-bottom:1px solid #ddd;">Key</th><th style="text-align:left; padding:5px; border-bottom:1px solid #ddd;">Value</th></tr>';
+
+        const authKeys = ["isLoggedIn", "username", "isAdmin", "auth"];
+        let hasData = false;
+
+        authKeys.forEach((key) => {
+          const value = localStorage.getItem(key);
+          if (value !== null) {
+            hasData = true;
+            html += `<tr><td style="padding:5px; border-bottom:1px solid #ddd;"><code>${key}</code></td><td style="padding:5px; border-bottom:1px solid #ddd;">${escapeHtml(
+              value
+            )}</td></tr>`;
+          }
+        });
+
+        if (!hasData) {
+          html +=
+            '<tr><td colspan="2" style="padding:5px;">No authentication data found in localStorage</td></tr>';
+        }
+
+        html += "</table>";
+        storageElement.innerHTML = html;
+      }
+
+      function updateCookiesDisplay() {
+        const cookiesElement = document.getElementById("cookies-content");
+
+        const cookies = document.cookie
+          .split(";")
+          .map((cookie) => cookie.trim());
+
+        let html = '<table style="width:100%; border-collapse: collapse;">';
+        html +=
+          '<tr><th style="text-align:left; padding:5px; border-bottom:1px solid #ddd;">Name</th><th style="text-align:left; padding:5px; border-bottom:1px solid #ddd;">Value</th></tr>';
+
+        if (cookies.length === 1 && cookies[0] === "") {
+          html +=
+            '<tr><td colspan="2" style="padding:5px;">No cookies found</td></tr>';
+        } else {
+          cookies.forEach((cookie) => {
+            const parts = cookie.split("=");
+            const name = parts[0];
+            const value = parts.slice(1).join("=");
+            html += `<tr><td style="padding:5px; border-bottom:1px solid #ddd;"><code>${escapeHtml(
+              name
+            )}</code></td><td style="padding:5px; border-bottom:1px solid #ddd;">${escapeHtml(
+              value
+            )}</td></tr>`;
+          });
+        }
+
+        html += "</table>";
+        cookiesElement.innerHTML = html;
+      }
+
+      function clearStorage() {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("username");
+        localStorage.removeItem("isAdmin");
+        localStorage.removeItem("auth");
+        log("LocalStorage cleared");
+        updateStorageDisplay();
+      }
+
+      function clearCookies() {
+        document.cookie.split(";").forEach(function (c) {
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(
+              /=.*/,
+              "=;expires=" + new Date().toUTCString() + ";path=/"
+            );
+        });
+        log("Cookies cleared");
+        updateCookiesDisplay();
+      }
+
+      // Network Tools functions
+      async function testCORS() {
+        const baseUrl = getBaseUrl();
+        const loginEndpoint = document
+          .getElementById("login-endpoint")
+          .value.trim();
+        const url = `${baseUrl}${loginEndpoint}`;
+
+        log(`Testing CORS for: ${url}`);
+        log(`Current origin: ${window.location.origin}`);
+
+        const corsResultsElement = document.getElementById("cors-results");
+        corsResultsElement.innerHTML = "<div>Testing CORS...</div>";
+
+        try {
+          // First, try a preflight OPTIONS request
+          const preflightResponse = await fetch(url, {
+            method: "OPTIONS",
+            headers: {
+              "Access-Control-Request-Method": "POST",
+              "Access-Control-Request-Headers": "Content-Type",
+              Origin: window.location.origin,
+            },
+          });
+
+          log(
+            `OPTIONS response status: ${preflightResponse.status} ${preflightResponse.statusText}`
+          );
+
+          // Log the CORS headers
+          const corsHeaders = [
+            "Access-Control-Allow-Origin",
+            "Access-Control-Allow-Methods",
+            "Access-Control-Allow-Headers",
+            "Access-Control-Allow-Credentials",
+          ];
+
+          let corsResultsHtml = `<h4>CORS Test Results</h4>`;
+          corsResultsHtml += `<div><strong>Status:</strong> <span class="${
+            preflightResponse.ok ? "success" : "error"
+          }">${preflightResponse.status} ${
+            preflightResponse.statusText
+          }</span></div>`;
+          corsResultsHtml += `<div><strong>Origin:</strong> ${window.location.origin}</div>`;
+          corsResultsHtml += `<div><strong>CORS Headers:</strong></div>`;
+          corsResultsHtml += `<ul>`;
+
+          log("CORS Headers:");
+          corsHeaders.forEach((header) => {
+            const value = preflightResponse.headers.get(header);
+            log(`  ${header}: ${value || "not present"}`);
+            corsResultsHtml += `<li><code>${header}</code>: <span class="${
+              value ? "success" : "error"
+            }">${value || "not present"}</span></li>`;
+          });
+          corsResultsHtml += `</ul>`;
+
+          if (
+            preflightResponse.status === 204 ||
+            preflightResponse.status === 200
+          ) {
+            log("CORS preflight appears to be successful.");
+            corsResultsHtml += `<div class="success">CORS preflight successful</div>`;
+          } else {
+            log(
+              "CORS preflight failed. Your server may not support preflight requests or may not allow this origin."
+            );
+            corsResultsHtml += `<div class="error">CORS preflight failed. Your server may not support preflight requests or may not allow this origin.</div>`;
+          }
+
+          corsResultsElement.innerHTML = corsResultsHtml;
+        } catch (error) {
+          log(`Error during CORS test: ${error.message}`, true);
+
+          corsResultsElement.innerHTML = `
+                    <h4>CORS Test Results</h4>
+                    <div class="error">Error: ${escapeHtml(error.message)}</div>
+                    <div>This is likely a CORS issue. Your server may not allow requests from ${
+                      window.location.origin
+                    }</div>
+                `;
+        }
+      }
+
+      async function testOptions() {
+        const baseUrl = getBaseUrl();
+        const endpoint = document
+          .getElementById("options-endpoint")
+          .value.trim();
+        const url = `${baseUrl}${endpoint}`;
+
+        log(`Testing OPTIONS request for: ${url}`);
+
+        const optionsResultsElement =
+          document.getElementById("options-results");
+        optionsResultsElement.innerHTML =
+          "<div>Testing OPTIONS request...</div>";
+
+        try {
+          const response = await fetch(url, {
+            method: "OPTIONS",
+          });
+
+          log(
+            `OPTIONS response status: ${response.status} ${response.statusText}`
+          );
+
+          // Get all headers
+          const headers = {};
+          response.headers.forEach((value, key) => {
+            headers[key] = value;
+            log(`  ${key}: ${value}`);
+          });
+
+          let resultsHtml = `<h4>OPTIONS Results</h4>`;
+          resultsHtml += `<div><strong>Status:</strong> <span class="${
+            response.ok ? "success" : "error"
+          }">${response.status} ${response.statusText}</span></div>`;
+
+          if (Object.keys(headers).length > 0) {
+            resultsHtml += `<div><strong>Headers:</strong></div><ul>`;
+            for (const [key, value] of Object.entries(headers)) {
+              resultsHtml += `<li><code>${key}</code>: ${escapeHtml(
+                value
+              )}</li>`;
+            }
+            resultsHtml += `</ul>`;
+          } else {
+            resultsHtml += `<div>No headers returned</div>`;
+          }
+
+          optionsResultsElement.innerHTML = resultsHtml;
+        } catch (error) {
+          log(`Error during OPTIONS test: ${error.message}`, true);
+
+          optionsResultsElement.innerHTML = `
+                    <h4>OPTIONS Results</h4>
+                    <div class="error">Error: ${escapeHtml(error.message)}</div>
+                `;
+        }
+      }
+
+      // Environment detection
+      function detectEnvironment() {
+        log("Detecting environment...");
+
+        const envInfo = {
+          userAgent: navigator.userAgent,
+          location: window.location.href,
+          origin: window.location.origin,
+          protocol: window.location.protocol,
+          hostname: window.location.hostname,
+          port: window.location.port,
+          cookiesEnabled: navigator.cookieEnabled,
+          localStorage: typeof localStorage !== "undefined",
+        };
+
+        log("Environment information:");
+        for (const [key, value] of Object.entries(envInfo)) {
+          log(`  ${key}: ${value}`);
+        }
+
+        // Try to auto-detect API URL
+        const hostname = window.location.hostname;
+        if (hostname === "localhost" || hostname === "127.0.0.1") {
+          log("Local development environment detected");
+
+          // If we're running from a file URL, suggest common local API endpoints
+          if (window.location.protocol === "file:") {
+            log("Running from local file, suggesting common API endpoints:");
+            log("  http://localhost:8080/api/v1");
+            log("  http://localhost:3000/api");
+            log("  http://127.0.0.1:8080/api/v1");
+          }
+        }
+
+        // Check if we have any cookie set
+        if (document.cookie) {
+          log("Found existing cookies: " + document.cookie);
+        } else {
+          log("No cookies present");
+        }
+
+        // Check if localStorage contains auth data
+        if (localStorage.getItem("isLoggedIn")) {
+          log("Found authentication data in localStorage");
+        } else {
+          log("No authentication data found in localStorage");
+        }
+
+        updateStorageDisplay();
+        updateCookiesDisplay();
+      }
+
+      // Show/Hide custom body based on selection
+      function toggleCustomBody() {
+        const bodyFormat = document.getElementById("request-body-format").value;
+        const customBodyGroup = document.getElementById("custom-body-group");
+
+        if (bodyFormat === "custom") {
+          customBodyGroup.style.display = "block";
+        } else {
+          customBodyGroup.style.display = "none";
+        }
+      }
+
+      // Setup event listeners
+      document.addEventListener("DOMContentLoaded", function () {
+        // Setup tabs
+        setupTabs();
+
+        // Setup login test
+        document
+          .getElementById("login-btn")
+          .addEventListener("click", testLogin);
+        document
+          .getElementById("request-body-format")
+          .addEventListener("change", toggleCustomBody);
+
+        // Setup API explorer
+        document
+          .getElementById("test-api-btn")
+          .addEventListener("click", testApiEndpoint);
+
+        // Setup auth state
+        document
+          .getElementById("update-storage-btn")
+          .addEventListener("click", updateStorageDisplay);
+        document
+          .getElementById("clear-storage-btn")
+          .addEventListener("click", clearStorage);
+        document
+          .getElementById("update-cookies-btn")
+          .addEventListener("click", updateCookiesDisplay);
+        document
+          .getElementById("clear-cookies-btn")
+          .addEventListener("click", clearCookies);
+
+        // Setup network tools
+        document
+          .getElementById("test-cors-btn")
+          .addEventListener("click", testCORS);
+        document
+          .getElementById("test-options-btn")
+          .addEventListener("click", testOptions);
+
+        // Setup general controls
+        document
+          .getElementById("detect-env-btn")
+          .addEventListener("click", detectEnvironment);
+        document
+          .getElementById("clear-log-btn")
+          .addEventListener("click", function () {
+            document.getElementById("debug-log").innerHTML = "";
+            log("Log cleared");
+          });
+
+        // Initial setup
+        updateStorageDisplay();
+        updateCookiesDisplay();
+        detectEnvironment();
+
+        log("Comprehensive login test tool ready");
+      });
+    </script>
+  </body>
+</html>

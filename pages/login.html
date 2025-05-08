@@ -1,0 +1,58 @@
+<section class="login-section">
+  <div class="login-container">
+    <div class="login-header">
+      <h1 class="login-title">Welcome Back</h1>
+      <p class="login-subtitle">Please login to continue</p>
+    </div>
+
+    <div
+      class="login-error-message"
+      style="
+        display: none;
+        color: red;
+        margin-bottom: 15px;
+        padding: 10px;
+        background-color: rgba(255, 0, 0, 0.1);
+        border-radius: 4px;
+      "
+    >
+      Incorrect username or password.
+    </div>
+
+    <form id="login-form" class="login-form">
+      <div class="form-field-group form-group">
+        <label for="login-username" class="form-field-label">Username</label>
+        <input
+          type="text"
+          id="login-username"
+          name="username"
+          class="login-field-input"
+          placeholder="Enter your username"
+          required
+        />
+      </div>
+
+      <div class="form-group form-field-group">
+        <label for="login-password" class="form-field-label">Password</label>
+        <input
+          type="password"
+          id="login-password"
+          name="password"
+          class="form-field-input"
+          placeholder="Enter your password"
+          required
+        />
+      </div>
+
+      <button type="submit" class="btn login-submit-btn btn-primary">
+        Login
+      </button>
+    </form>
+
+    <div class="register-redirect-container">
+      <a href="#" data-page="register.html" class="register-redirect-link"
+        >No account? Register here!</a
+      >
+    </div>
+  </div>
+</section>

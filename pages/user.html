@@ -1,0 +1,255 @@
+<section class="user-section">
+  <!-- This div is shown if the user is not logged in -->
+  <div id="user-login-required" class="login-required">
+    <div class="login-required-content">
+      <h2 class="login-required-title">Login Required</h2>
+      <p class="login-required-message">
+        You need to be logged in to view your profile.
+      </p>
+      <a href="#" data-page="login.html" class="btn login-button"
+        >Go to Login</a
+      >
+    </div>
+  </div>
+
+  <!-- This content is only shown if the user is logged in -->
+  <div id="user-profile" class="user-profile">
+    <div class="user-header">
+      <h1 class="user-title">My Pages</h1>
+    </div>
+
+    <div class="user-content">
+      <div class="user-info">
+        <div class="user-details">
+          <h2 class="user-name">Vixilicious</h2>
+          <p class="user-email">vixilicious@example.com</p>
+          <p class="user-phone">+46 70 123 4567</p>
+          <button class="btn change-profile-button">Change profile info</button>
+        </div>
+      </div>
+
+      <div class="user-rentals">
+        <h2 class="rentals-title">My Rentals</h2>
+
+        <!-- If no rentals exist -->
+        <div id="no-rentals-message" class="no-rentals-message">
+          <p>You don't have any rentals yet.</p>
+          <a href="#" data-page="rental.html" class="btn browse-cars-button"
+            >Browse Cars</a
+          >
+        </div>
+
+        <!-- Rental list (shown if rentals exist) -->
+        <div id="rentals-list" class="rentals-list">
+          <!-- Example rental items (these would be generated dynamically from the API) -->
+          <div class="rental-item">
+            <div class="rental-image">
+              <img
+                src="images/cars/car1-small.jpg"
+                alt="Mercedes-Benz E-Class"
+                class="rental-car-image"
+              />
+            </div>
+            <div class="rental-info">
+              <h3 class="rental-car-name">Mercedes-Benz E-Class</h3>
+              <div class="rental-details">
+                <p class="rental-dates">2025-05-10 — 2025-05-13</p>
+                <p class="rental-duration">3 days</p>
+                <p class="rental-price">Total: 5 997:-</p>
+              </div>
+            </div>
+            <div class="rental-actions">
+              <button class="btn change-date-button" data-rental-id="101">
+                Change date
+              </button>
+            </div>
+          </div>
+
+          <div class="rental-item">
+            <div class="rental-image">
+              <img
+                src="images/cars/car2-small.jpg"
+                alt="BMW X5"
+                class="rental-car-image"
+              />
+            </div>
+            <div class="rental-info">
+              <h3 class="rental-car-name">BMW X5</h3>
+              <div class="rental-details">
+                <p class="rental-dates">2025-04-15 — 2025-04-18</p>
+                <p class="rental-duration">3 days</p>
+                <p class="rental-price">Total: 8 997:-</p>
+              </div>
+            </div>
+            <div class="rental-actions">
+              <button class="btn change-date-button" data-rental-id="102">
+                Change date
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Date Modal (initially hidden) -->
+  <div id="change-date-modal" class="change-date-modal">
+    <div class="change-date-content">
+      <div class="change-date-header">
+        <h2 class="change-date-title">Change Rental Dates</h2>
+        <button class="close-modal-button">&times;</button>
+      </div>
+      <div class="change-date-body">
+        <div class="car-info">
+          <h3 class="car-name" id="change-date-car-name">
+            Mercedes-Benz E-Class
+          </h3>
+          <p class="car-price" id="change-date-car-price">1 999:- per day</p>
+        </div>
+        <form id="change-date-form" class="change-date-form">
+          <div class="form-field-group">
+            <label for="rental-start-date" class="form-field-label"
+              >Start Date</label
+            >
+            <input
+              type="date"
+              id="rental-start-date"
+              name="startDate"
+              class="form-field-input"
+              required
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="rental-end-date" class="form-field-label"
+              >End Date</label
+            >
+            <input
+              type="date"
+              id="rental-end-date"
+              name="endDate"
+              class="form-field-input"
+              required
+            />
+          </div>
+
+          <div class="rental-summary">
+            <p>Duration: <span id="rental-duration">3</span> days</p>
+            <p>New Total: <span id="rental-total-price">5 997:-</span></p>
+          </div>
+
+          <div class="change-date-error-message" id="change-date-error">
+            <p class="error-text">
+              Error updating rental dates. Please try again.
+            </p>
+          </div>
+        </form>
+      </div>
+      <div class="change-date-footer">
+        <button class="btn save-button" type="submit" form="change-date-form">
+          Save Changes
+        </button>
+        <button class="btn cancel-button" id="cancel-change-date">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Profile Modal (initially hidden) -->
+  <div id="change-profile-modal" class="change-profile-modal">
+    <div class="change-profile-content">
+      <div class="change-profile-header">
+        <h2 class="change-profile-title">Change Profile Information</h2>
+        <button class="close-modal-button">&times;</button>
+      </div>
+      <div class="change-profile-body">
+        <form id="change-profile-form" class="change-profile-form">
+          <div class="form-field-group">
+            <label for="edit-email" class="form-field-label">Email</label>
+            <input
+              type="email"
+              id="edit-email"
+              name="email"
+              class="form-field-input"
+              placeholder="Enter your email address"
+              value="vixilicious@example.com"
+              required
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-phone" class="form-field-label"
+              >Phone Number</label
+            >
+            <input
+              type="tel"
+              id="edit-phone"
+              name="phone"
+              class="form-field-input"
+              placeholder="Enter your phone number"
+              value="+46 70 123 4567"
+              required
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-current-password" class="form-field-label"
+              >Current Password</label
+            >
+            <input
+              type="password"
+              id="edit-current-password"
+              name="currentPassword"
+              class="form-field-input"
+              placeholder="Enter your current password"
+              required
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-new-password" class="form-field-label"
+              >New Password (Optional)</label
+            >
+            <input
+              type="password"
+              id="edit-new-password"
+              name="newPassword"
+              class="form-field-input"
+              placeholder="Enter a new password (leave blank to keep current)"
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-confirm-password" class="form-field-label"
+              >Confirm New Password</label
+            >
+            <input
+              type="password"
+              id="edit-confirm-password"
+              name="confirmPassword"
+              class="form-field-input"
+              placeholder="Confirm your new password"
+            />
+          </div>
+
+          <div class="change-profile-error-message" id="change-profile-error">
+            <p class="error-text">Error updating profile. Please try again.</p>
+          </div>
+        </form>
+      </div>
+      <div class="change-profile-footer">
+        <button
+          class="btn save-button"
+          type="submit"
+          form="change-profile-form"
+        >
+          Save Changes
+        </button>
+        <button class="btn cancel-button" id="cancel-change-profile">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
