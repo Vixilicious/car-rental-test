@@ -1,10 +1,624 @@
-All folders and files so far:
-images/w-lgog-gold.png
-js/app.js (no code yet)
-public/admin.html:
-(no code yet)
+All folders and files so far in my car rental app project with API in IntelliJ and backend in MySQL, this code works except for the car images not being displayed correctly from the database through the APIs endpoint, help me fix it. I will send you 2 files at a time and write the word “Done, that was the last files.” When I’mdone sending them all, let’s go:
+Index.html:
 
-public/booking.html:
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wigell Car Rentals</title>
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Sidebar Navigation -->
+      <button
+        class="menu-toggle sidebar-toggle"
+        aria-label="Toggle navigation menu"
+      >
+        <span></span>
+      </button>
+      <div class="sidebar-overlay"></div>
+      <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+          <img
+            src="images/w-logo-car.png"
+            alt="Wigell logo"
+            class="sidebar-logo"
+          />
+          <!-- <h1 class="sidebar-title">Wigell</h1> -->
+        </div>
+
+        <nav class="sidebar-nav">
+          <ul class="nav-links">
+            <li class="nav-item">
+              <a href="#" data-page="home.html" class="nav-link active">
+                Home
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" data-page="rental.html" class="nav-link"> Cars </a>
+            </li>
+            <!-- Login link (shown when logged out) -->
+            <li class="nav-item" id="login-nav-item">
+              <a href="#" data-page="login.html" class="nav-link"> Login </a>
+            </li>
+            <!-- My Pages link (shown for regular users) -->
+            <li class="nav-item" id="my-pages-nav-item" style="display: none">
+              <a href="#" data-page="user.html" class="nav-link">
+                My Account
+              </a>
+            </li>
+            <!-- Controller link (shown for admin users) -->
+            <li class="nav-item" id="admin-nav-item" style="display: none">
+              <a href="#" data-page="admin.html" class="nav-link">
+                Admin Page
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div id="user-welcome" class="user-welcome" style="display: none">
+            Welcome, Guest
+          </div>
+          <div id="logout-btn" style="display: none">
+            <a href="#" class="logout-link">Logout</a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <div class="content-wrapper">
+        <main class="main-content">
+          <!-- Dynamic content loaded via JavaScript -->
+          <div id="content-container"></div>
+        </main>
+
+        <footer class="footer">
+          <div class="footer-container">
+            <div class="footer-content">
+              <p class="copyright">
+                Copyright &copy; 2025 Wigell Concernens AB
+              </p>
+              <p class="contact">
+                Email: info@wigellcars.se | Phone: +46 8 123 456
+              </p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Load JavaScript modules -->
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script src="js/rental.js"></script>
+    <script src="js/booking.js"></script>
+    <script src="js/user.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/app.js"></script>
+
+  </body>
+</html>
+
+pages/admin.html:
+
+<section class="admin-section">
+  <!-- This div is shown if the user is not an admin -->
+  <div id="admin-access-denied" class="access-denied">
+    <div class="access-denied-content">
+      <h2 class="access-denied-title">Access Denied</h2>
+      <p class="access-denied-message">
+        You need administrator privileges to access this page.
+      </p>
+      <a href="#" data-page="home.html" class="btn home-button">Back to Home</a>
+    </div>
+  </div>
+
+  <!-- This content is only shown if the user is an admin -->
+  <div id="admin-dashboard" class="admin-dashboard">
+    <div class="admin-header">
+      <h1 class="admin-title">Controller Dashboard</h1>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="tab-button active" data-tab="users-tab">Users</button>
+      <button class="tab-button" data-tab="cars-tab">Cars</button>
+      <button class="tab-button" data-tab="bookings-tab">Bookings</button>
+    </div>
+
+    <!-- Users Tab -->
+    <div id="users-tab" class="admin-tab-content active">
+      <div class="admin-toolbar">
+        <div class="admin-search">
+          <input
+            type="text"
+            id="user-search"
+            class="search-input"
+            placeholder="Search users..."
+          />
+          <button class="search-button">Search</button>
+        </div>
+      </div>
+
+      <div class="admin-table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Vixilicious</td>
+              <td>vixilicious@example.com</td>
+              <td>+46 70 123 4567</td>
+              <td>USER</td>
+              <td>
+                <button class="btn view-button" data-user-id="1">
+                  View Bookings
+                </button>
+                <button class="btn delete-button" data-user-id="1">
+                  Delete User
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>johndoe</td>
+              <td>john@example.com</td>
+              <td>+46 70 987 6543</td>
+              <td>USER</td>
+              <td>
+                <button class="btn view-button" data-user-id="2">
+                  View Bookings
+                </button>
+                <button class="btn delete-button" data-user-id="2">
+                  Delete User
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>admin</td>
+              <td>admin@example.com</td>
+              <td>+46 70 555 5555</td>
+              <td>ADMIN</td>
+              <td>
+                <button class="btn view-button" data-user-id="3">
+                  View Bookings
+                </button>
+                <button class="btn delete-button" data-user-id="3" disabled>
+                  Delete User
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Cars Tab -->
+    <div id="cars-tab" class="admin-tab-content">
+      <div class="admin-toolbar">
+        <div class="admin-search">
+          <input
+            type="text"
+            id="car-search-admin"
+            class="search-input"
+            placeholder="Search cars..."
+          />
+          <button class="search-button">Search</button>
+        </div>
+        <button class="btn add-button">Add New Car</button>
+      </div>
+
+      <div class="admin-table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Brand</th>
+              <th>Model</th>
+              <th>Type</th>
+              <th>Daily Rate</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Mercedes-Benz</td>
+              <td>E-Class</td>
+              <td>Sedan</td>
+              <td>1899:-</td>
+              <td>Available</td>
+              <td>
+                <button class="btn edit-button" data-car-id="1">Edit</button>
+                <button class="btn delete-button" data-car-id="1">
+                  Delete
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>BMW</td>
+              <td>X5</td>
+              <td>SUV</td>
+              <td>2999:-</td>
+              <td>Rented</td>
+              <td>
+                <button class="btn edit-button" data-car-id="2">Edit</button>
+                <button class="btn delete-button" data-car-id="2">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Bookings Tab -->
+    <div id="bookings-tab" class="admin-tab-content">
+      <div class="admin-toolbar">
+        <div class="admin-search">
+          <input
+            type="text"
+            id="booking-search"
+            class="search-input"
+            placeholder="Search bookings..."
+          />
+          <button class="search-button">Search</button>
+        </div>
+      </div>
+
+      <div class="admin-table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Car</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Total Price</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>101</td>
+              <td>Vixilicious</td>
+              <td>Mercedes-Benz E-Class</td>
+              <td>2025-05-10</td>
+              <td>2025-05-13</td>
+              <td>5 697:-</td>
+              <td>
+                <button class="btn edit-button" data-booking-id="101">
+                  Edit
+                </button>
+                <button class="btn delete-button" data-booking-id="101">
+                  Delete
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>102</td>
+              <td>johndoe</td>
+              <td>BMW X5</td>
+              <td>2025-04-15</td>
+              <td>2025-04-18</td>
+              <td>8 997:-</td>
+              <td>
+                <button class="btn edit-button" data-booking-id="102">
+                  Edit
+                </button>
+                <button class="btn delete-button" data-booking-id="102">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- User Bookings Modal -->
+  <div id="user-bookings-modal" class="admin-modal">
+    <div class="admin-modal-content">
+      <div class="admin-modal-header">
+        <h2 class="admin-modal-title">User Bookings</h2>
+        <button class="close-modal-button">&times;</button>
+      </div>
+      <div class="admin-modal-body">
+        <div class="user-info-summary">
+          <h3 id="modal-username">Vixilicious</h3>
+          <p id="modal-user-email">vixilicious@example.com</p>
+        </div>
+
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Car</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Total Price</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="user-bookings-list">
+            <tr>
+              <td>101</td>
+              <td>Mercedes-Benz E-Class</td>
+              <td>2025-05-10</td>
+              <td>2025-05-13</td>
+              <td>5 697:-</td>
+              <td>
+                <button class="btn edit-button" data-booking-id="101">
+                  Edit
+                </button>
+                <button class="btn delete-button" data-booking-id="101">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="admin-modal-footer">
+        <button class="btn close-button">Close</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div id="confirm-delete-modal" class="admin-modal">
+    <div class="admin-modal-content">
+      <div class="admin-modal-header">
+        <h2 class="admin-modal-title">Confirm Deletion</h2>
+        <button class="close-modal-button">&times;</button>
+      </div>
+      <div class="admin-modal-body">
+        <p id="delete-confirmation-message">
+          Are you sure you want to delete this item? This action cannot be
+          undone.
+        </p>
+      </div>
+      <div class="admin-modal-footer">
+        <button class="btn delete-confirm-button">Yes, Delete</button>
+        <button class="btn cancel-button">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Booking Modal -->
+  <div id="edit-booking-modal" class="admin-modal">
+    <div class="admin-modal-content">
+      <div class="admin-modal-header">
+        <h2 class="admin-modal-title">Edit Booking</h2>
+        <button class="close-modal-button">&times;</button>
+      </div>
+      <div class="admin-modal-body">
+        <form id="edit-booking-form" class="edit-booking-form">
+          <div class="form-field-group">
+            <label for="edit-booking-car" class="form-field-label">Car</label>
+            <select id="edit-booking-car" name="carId" class="form-field-input">
+              <option value="1">Mercedes-Benz E-Class</option>
+              <option value="2">BMW X5</option>
+            </select>
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-booking-start-date" class="form-field-label"
+              >Start Date</label
+            >
+            <input
+              type="date"
+              id="edit-booking-start-date"
+              name="startDate"
+              class="form-field-input"
+              required
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-booking-end-date" class="form-field-label"
+              >End Date</label
+            >
+            <input
+              type="date"
+              id="edit-booking-end-date"
+              name="endDate"
+              class="form-field-input"
+              required
+            />
+          </div>
+
+          <div class="booking-summary">
+            <div class="booking-summary-item">
+              <span class="booking-summary-label">Duration:</span>
+              <span class="booking-summary-value" id="edit-booking-duration"
+                >3 days</span
+              >
+            </div>
+            <div class="booking-summary-item">
+              <span class="booking-summary-label">Daily Rate:</span>
+              <span class="booking-summary-value" id="edit-booking-daily-rate"
+                >1 899:-</span
+              >
+            </div>
+            <div class="booking-summary-item total">
+              <span class="booking-summary-label">Total Price:</span>
+              <span class="booking-summary-value" id="edit-booking-total-price"
+                >5 697:-</span
+              >
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="admin-modal-footer">
+        <button class="btn save-button" type="submit" form="edit-booking-form">
+          Save Changes
+        </button>
+        <button class="btn cancel-button">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Add/Edit Car Modal -->
+  <div id="edit-car-modal" class="admin-modal">
+    <div class="admin-modal-content">
+      <div class="admin-modal-header">
+        <h2 class="admin-modal-title" id="car-modal-title">Add New Car</h2>
+        <button class="close-modal-button">&times;</button>
+      </div>
+      <div class="admin-modal-body">
+        <form id="edit-car-form" class="edit-car-form">
+          <div class="form-field-group">
+            <label for="edit-car-brand" class="form-field-label">Brand</label>
+            <input
+              type="text"
+              id="edit-car-brand"
+              name="brand"
+              class="form-field-input"
+              placeholder="Enter car brand"
+              required
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-car-model" class="form-field-label">Model</label>
+            <input
+              type="text"
+              id="edit-car-model"
+              name="model"
+              class="form-field-input"
+              placeholder="Enter car model"
+              required
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-car-type" class="form-field-label">Type</label>
+            <select
+              id="edit-car-type"
+              name="type"
+              class="form-field-input"
+              required
+            >
+              <option value="sedan">Sedan</option>
+              <option value="suv">SUV</option>
+              <option value="coupe">Coupe</option>
+              <option value="van">Family van</option>
+              <option value="cabriolet">Cabriolet</option>
+            </select>
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-car-price" class="form-field-label"
+              >Daily Rate (SEK)</label
+            >
+            <input
+              type="number"
+              id="edit-car-price"
+              name="price"
+              class="form-field-input"
+              placeholder="Enter daily rate"
+              required
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-car-image" class="form-field-label"
+              >Image URL</label
+            >
+            <input
+              type="text"
+              id="edit-car-image"
+              name="imageUrl"
+              class="form-field-input"
+              placeholder="Enter image URL"
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-car-feature1" class="form-field-label"
+              >Feature 1</label
+            >
+            <input
+              type="text"
+              id="edit-car-feature1"
+              name="feature1"
+              class="form-field-input"
+              placeholder="Feature 1"
+              value="Automatic Transmission"
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-car-feature2" class="form-field-label"
+              >Feature 2</label
+            >
+            <input
+              type="text"
+              id="edit-car-feature2"
+              name="feature2"
+              class="form-field-input"
+              placeholder="Feature 2"
+              value="4 Passengers"
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-car-feature3" class="form-field-label"
+              >Feature 3</label
+            >
+            <input
+              type="text"
+              id="edit-car-feature3"
+              name="feature3"
+              class="form-field-input"
+              placeholder="Feature 3"
+              value="Air Conditioning"
+            />
+          </div>
+        </form>
+      </div>
+      <div class="admin-modal-footer">
+        <button class="btn save-button" type="submit" form="edit-car-form">
+          Save Car
+        </button>
+        <button class="btn cancel-button">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+pages/booking.html:
 
 <section class="booking-section">
   <!-- This div is shown if the user is not logged in -->
@@ -122,540 +736,5676 @@ public/booking.html:
   </div>
 </section>
 
-public/home.html:
+pages/home.html:
 
-<section class="hero-section">
-    <h1 class="main-title">Welcome to Wigells Car rentals</h1>
-    <p>Rent your dream car today!</p>
-    <a href="#" data-page="rental.html" class="view-cars-button">View Cars</a>
+<div class="home-container">
+  <header class="hero">
+    <div class="hero-content">
+      <h1>Welcome to Wigell Car Rentals</h1>
+      <p>Your premium choice for car rentals in Sweden</p>
+      <a
+        href="#"
+        class="btn btn-primary"
+        onclick="app.loadPage('rental.html'); return false;"
+        >View Our Cars</a
+      >
+    </div>
+  </header>
+
+  <section class="features">
+    <div class="feature-item">
+      <div class="feature-icon">🚗</div>
+      <h3>Wide Selection</h3>
+      <p>Choose from our diverse fleet of vehicles for any occasion.</p>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">💰</div>
+      <h3>Best Prices</h3>
+      <p>Competitive rates with no hidden fees.</p>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🔒</div>
+      <h3>Secure Booking</h3>
+      <p>Easy and secure online reservation system.</p>
+    </div>
   </section>
-  
-public/login.html:
+
+  <section class="about-section">
+    <h2>About Wigell Car Rentals</h2>
+    <p>
+      Wigell Car Rentals is a premium car rental service based in Sweden. We
+      pride ourselves on offering high-quality vehicles, exceptional customer
+      service, and competitive rates to meet all your transportation needs.
+    </p>
+    <p>
+      Whether you're planning a business trip, a family vacation, or just need a
+      reliable vehicle for everyday use, we have the perfect car for you.
+    </p>
+  </section>
+</div>
+
+pages/login.html:
+
 <section class="login-section">
-    <div class="login-container">
-      <div class="login-header">
-        <h1 class="login-title">Welcome Back</h1>
-        <p class="login-subtitle">Please login to continue</p>
-      </div>
-  
-      <div class="login-error-message">Incorrect username or password.</div>
-  
-      <form id="login-form" class="login-form">
-        <div class="form-field-group">
-          <label for="login-username" class="form-field-label">Username</label>
-          <input
-            type="text"
-            id="login-username"
-            name="username"
-            class="login-field-input"
-            placeholder="Enter your username"
-            required
-          />
-        </div>
-  
-        <div class="form-field-group">
-          <label for="login-password" class="form-field-label">Password</label>
-          <input
-            type="password"
-            id="login-password"
-            name="password"
-            class="form-field-input"
-            placeholder="Enter your password"
-            required
-          />
-        </div>
-  
-        <button type="submit" class="btn login-submit-btn">Login</button>
-      </form>
-  
-      <div class="register-redirect-container">
-        <a href="#" data-page="register.html" class="register-redirect-link"
-          >No account? Register here!</a
-        >
-      </div>
+  <div class="login-container">
+    <div class="login-header">
+      <h1 class="login-title">Welcome Back</h1>
+      <p class="login-subtitle">Please login to continue</p>
     </div>
-  </section>
-  
-public/register.html:
-<section class="register-section">
-    <div class="register-container">
-      <div class="register-header">
-        <h1 class="register-title">Create an Account</h1>
-        <p class="register-subtitle">Fill in your details to get started</p>
-      </div>
-  
-      <div class="register-error-message">
-        Error creating account. Please try again.
-      </div>
-  
-      <form id="register-form" class="register-form">
-        <div class="form-field-row">
-          <div class="form-field-group">
-            <label for="register-firstname" class="form-field-label"
-              >First Name</label
-            >
-            <input
-              type="text"
-              id="register-firstname"
-              name="firstName"
-              class="form-field-input"
-              placeholder="Enter your first name"
-              required
-            />
-          </div>
-  
-          <div class="form-field-group">
-            <label for="register-lastname" class="form-field-label"
-              >Last Name</label
-            >
-            <input
-              type="text"
-              id="register-lastname"
-              name="lastName"
-              class="form-field-input"
-              placeholder="Enter your last name"
-              required
-            />
-          </div>
-        </div>
-  
-        <div class="form-field-group">
-          <label for="register-username" class="form-field-label">Username</label>
-          <input
-            type="text"
-            id="register-username"
-            name="username"
-            class="form-field-input"
-            placeholder="Choose a username"
-            required
-          />
-        </div>
-  
-        <div class="form-field-group">
-          <label for="register-phone" class="form-field-label"
-            >Phone Number</label
-          >
-          <input
-            type="tel"
-            id="register-phone"
-            name="phone"
-            class="form-field-input"
-            placeholder="Enter your phone number"
-            required
-          />
-        </div>
-  
-        <div class="form-field-group">
-          <label for="register-email" class="form-field-label">Email</label>
-          <input
-            type="email"
-            id="register-email"
-            name="email"
-            class="form-field-input"
-            placeholder="Enter your email address"
-            required
-          />
-        </div>
-  
-        <div class="form-field-group">
-          <label for="register-password" class="form-field-label">Password</label>
-          <input
-            type="password"
-            id="register-password"
-            name="password"
-            class="form-field-input"
-            placeholder="Create a password"
-            required
-          />
-        </div>
-  
-        <div class="form-field-group">
-          <label for="register-password-confirm" class="form-field-label"
-            >Repeat Password</label
-          >
-          <input
-            type="password"
-            id="register-password-confirm"
-            name="repeatPassword"
-            class="form-field-input"
-            placeholder="Repeat your password"
-            required
-          />
-        </div>
-  
-        <button type="submit" class="btn register-submit-btn">
-          Create Account
-        </button>
-      </form>
-  
-      <div class="login-redirect-container">
-        <a href="#" data-page="login.html" class="login-redirect-link">
-          Already have an account? Login here!
-        </a>
-      </div>
+
+    <div
+      class="login-error-message"
+      style="
+        display: none;
+        color: red;
+        margin-bottom: 15px;
+        padding: 10px;
+        background-color: rgba(255, 0, 0, 0.1);
+        border-radius: 4px;
+      "
+    >
+      Incorrect username or password.
     </div>
-  </section>
-  
-public/rental.html:
-<section class="rental-section">
-    <div class="rental-header">
-      <h1 class="rental-title">Available Cars</h1>
-    </div>
-  
-    <div class="car-filter-container">
-      <div class="search-box">
+
+    <form id="login-form" class="login-form">
+      <div class="form-field-group form-group">
+        <label for="login-username" class="form-field-label">Username</label>
         <input
           type="text"
-          id="car-search"
-          class="search-input"
-          placeholder="Search cars..."
+          id="login-username"
+          name="username"
+          class="login-field-input"
+          placeholder="Enter your username"
+          required
         />
-        <button type="button" class="search-button">Search</button>
       </div>
-  
-      <div class="filter-options">
-        <select id="car-type-filter" class="filter-select">
-          <option value="">All Types</option>
-          <option value="sedan">Sedan</option>
-          <option value="suv">SUV</option>
-          <option value="coupe">Coupe</option>
-          <option value="van">Family van</option>
-          <option value="cabriolet">Cabriolet</option>
-        </select>
-  
-        <select id="sort-by" class="filter-select">
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
-        </select>
+
+      <div class="form-group form-field-group">
+        <label for="login-password" class="form-field-label">Password</label>
+        <input
+          type="password"
+          id="login-password"
+          name="password"
+          class="form-field-input"
+          placeholder="Enter your password"
+          required
+        />
       </div>
+
+      <button type="submit" class="btn login-submit-btn btn-primary">
+        Login
+      </button>
+    </form>
+
+    <div class="register-redirect-container">
+      <a href="#" data-page="register.html" class="register-redirect-link"
+        >No account? Register here!</a
+      >
     </div>
-  
-    <div class="car-grid">
-      <!-- Example car cards (these would normally be generated dynamically from the API) -->
-      <div class="car-card">
-        <div class="car-image-container">
-          <img
-            src="images/cars/car1.jpg"
-            alt="Mercedes-Benz E-Class"
-            class="car-image"
+
+  </div>
+</section>
+
+pages/register.html:
+
+<section class="register-section">
+  <div class="register-container">
+    <div class="register-header">
+      <h1 class="register-title">Create an Account</h1>
+      <p class="register-subtitle">Fill in your details to get started</p>
+    </div>
+
+    <div class="register-error-message">
+      Error creating account. Please try again.
+    </div>
+
+    <form id="register-form" class="register-form">
+      <div class="form-field-row">
+        <div class="form-field-group">
+          <label for="register-firstname" class="form-field-label"
+            >First Name</label
+          >
+          <input
+            type="text"
+            id="register-firstname"
+            name="firstName"
+            class="form-field-input"
+            placeholder="Enter your first name"
+            required
           />
         </div>
-        <div class="car-details">
-          <h2 class="car-name">Mercedes-Benz</h2>
-          <h3 class="car-model">E-Class</h3>
-          <p class="car-type">Sedan</p>
-          <ul class="car-features">
-            <li class="car-feature1">Automatic Transmission</li>
-            <li class="car-feature2">4 Passengers</li>
-            <li class="car-feature3">Air Conditioning</li>
-          </ul>
-          <div class="car-pricing">
-            <p class="car-price">1899:- per day</p>
-            <button class="btn rent-button" data-car-id="1">Rent Now</button>
-          </div>
+
+        <div class="form-field-group">
+          <label for="register-lastname" class="form-field-label"
+            >Last Name</label
+          >
+          <input
+            type="text"
+            id="register-lastname"
+            name="lastName"
+            class="form-field-input"
+            placeholder="Enter your last name"
+            required
+          />
         </div>
       </div>
-  
-      <div class="car-card">
-        <div class="car-image-container">
-          <img src="images/cars/car2.jpg" alt="BMW X5" class="car-image" />
-        </div>
-        <div class="car-details">
-          <h2 class="car-name">BMW</h2>
-          <h3 class="car-model">X5</h3>
-          <p class="car-type">SUV</p>
-          <ul class="car-features">
-            <li class="car-feature1">Automatic Transmission</li>
-            <li class="car-feature2">5 Passengers</li>
-            <li class="car-feature3">Air Conditioning</li>
-          </ul>
-          <div class="car-pricing">
-            <p class="car-price">2999:- per day</p>
-            <button class="btn rent-button" data-car-id="2">Rent Now</button>
-          </div>
-        </div>
+
+      <div class="form-field-group">
+        <label for="register-username" class="form-field-label">Username</label>
+        <input
+          type="text"
+          id="register-username"
+          name="username"
+          class="form-field-input"
+          placeholder="Choose a username"
+          required
+        />
       </div>
+
+      <div class="form-field-group">
+        <label for="register-phone" class="form-field-label"
+          >Phone Number</label
+        >
+        <input
+          type="tel"
+          id="register-phone"
+          name="phone"
+          class="form-field-input"
+          placeholder="Enter your phone number"
+          required
+        />
+      </div>
+
+      <div class="form-field-group">
+        <label for="register-email" class="form-field-label">Email</label>
+        <input
+          type="email"
+          id="register-email"
+          name="email"
+          class="form-field-input"
+          placeholder="Enter your email address"
+          required
+        />
+      </div>
+
+      <div class="form-field-group">
+        <label for="register-password" class="form-field-label">Password</label>
+        <input
+          type="password"
+          id="register-password"
+          name="password"
+          class="form-field-input"
+          placeholder="Create a password"
+          required
+        />
+      </div>
+
+      <div class="form-field-group">
+        <label for="register-password-confirm" class="form-field-label"
+          >Repeat Password</label
+        >
+        <input
+          type="password"
+          id="register-password-confirm"
+          name="repeatPassword"
+          class="form-field-input"
+          placeholder="Repeat your password"
+          required
+        />
+      </div>
+
+      <button type="submit" class="btn register-submit-btn">
+        Create Account
+      </button>
+    </form>
+
+    <div class="login-redirect-container">
+      <a href="#" data-page="login.html" class="login-redirect-link">
+        Already have an account? Login here!
+      </a>
     </div>
-  
-    <!-- Login prompt overlay (initially hidden) -->
-    <div id="login-prompt-rental" class="login-prompt">
-      <div class="login-prompt-content">
-        <h2 class="login-prompt-title">Login Required</h2>
-        <p class="login-prompt-message">
-          You need to be logged in to rent a car.
-        </p>
-        <div class="login-prompt-actions">
-          <a href="#" data-page="login.html" class="btn login-button">Login</a>
-          <button class="btn cancel-button" id="cancel-login">Cancel</button>
-        </div>
-      </div>
-    </div>
-  </section>
-  
-public/user.html:
+
+  </div>
+</section>
+
+pages/user.html:
+
 <section class="user-section">
-    <!-- This div is shown if the user is not logged in -->
-    <div id="user-login-required" class="login-required">
-      <div class="login-required-content">
-        <h2 class="login-required-title">Login Required</h2>
-        <p class="login-required-message">You need to be logged in to view your profile.</p>
-        <a href="#" data-page="login.html" class="btn login-button">Go to Login</a>
-      </div>
+  <!-- This div is shown if the user is not logged in -->
+  <div id="user-login-required" class="login-required">
+    <div class="login-required-content">
+      <h2 class="login-required-title">Login Required</h2>
+      <p class="login-required-message">
+        You need to be logged in to view your profile.
+      </p>
+      <a href="#" data-page="login.html" class="btn login-button"
+        >Go to Login</a
+      >
     </div>
-    
-    <!-- This content is only shown if the user is logged in -->
-    <div id="user-profile" class="user-profile">
-      <div class="user-header">
-        <h1 class="user-title">My Pages</h1>
-      </div>
-      
-      <div class="user-content">
-        <div class="user-info">
-          <div class="user-details">
-            <h2 class="user-name">Vixilicious</h2>
-            <p class="user-email">vixilicious@example.com</p>
-            <p class="user-phone">+46 70 123 4567</p>
-            <button class="btn change-profile-button">Change profile info</button>
-          </div>
-        </div>
-        
-        <div class="user-rentals">
-          <h2 class="rentals-title">My Rentals</h2>
-          
-          <!-- If no rentals exist -->
-          <div id="no-rentals-message" class="no-rentals-message">
-            <p>You don't have any rentals yet.</p>
-            <a href="#" data-page="rental.html" class="btn browse-cars-button">Browse Cars</a>
-          </div>
-          
-          <!-- Rental list (shown if rentals exist) -->
-          <div id="rentals-list" class="rentals-list">
-            <!-- Example rental items (these would be generated dynamically from the API) -->
-            <div class="rental-item">
-              <div class="rental-image">
-                <img src="images/cars/car1-small.jpg" alt="Mercedes-Benz E-Class" class="rental-car-image">
-              </div>
-              <div class="rental-info">
-                <h3 class="rental-car-name">Mercedes-Benz E-Class</h3>
-                <div class="rental-details">
-                  <p class="rental-dates">2025-05-10 — 2025-05-13</p>
-                  <p class="rental-duration">3 days</p>
-                  <p class="rental-price">Total: 5 997:-</p>
-                </div>
-              </div>
-              <div class="rental-actions">
-                <button class="btn change-date-button" data-rental-id="101">Change date</button>
-              </div>
-            </div>
-            
-            <div class="rental-item">
-              <div class="rental-image">
-                <img src="images/cars/car2-small.jpg" alt="BMW X5" class="rental-car-image">
-              </div>
-              <div class="rental-info">
-                <h3 class="rental-car-name">BMW X5</h3>
-                <div class="rental-details">
-                  <p class="rental-dates">2025-04-15 — 2025-04-18</p>
-                  <p class="rental-duration">3 days</p>
-                  <p class="rental-price">Total: 8 997:-</p>
-                </div>
-              </div>
-              <div class="rental-actions">
-                <button class="btn change-date-button" data-rental-id="102">Change date</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Change Date Modal (initially hidden) -->
-    <div id="change-date-modal" class="change-date-modal">
-      <div class="change-date-content">
-        <div class="change-date-header">
-          <h2 class="change-date-title">Change Rental Dates</h2>
-          <button class="close-modal-button">&times;</button>
-        </div>
-        <div class="change-date-body">
-          <div class="car-info">
-            <h3 class="car-name" id="change-date-car-name">Mercedes-Benz E-Class</h3>
-            <p class="car-price" id="change-date-car-price">1 999:- per day</p>
-          </div>
-          <form id="change-date-form" class="change-date-form">
-            <div class="form-field-group">
-              <label for="rental-start-date" class="form-field-label">Start Date</label>
-              <input 
-                type="date" 
-                id="rental-start-date" 
-                name="startDate" 
-                class="form-field-input" 
-                required
-              />
-            </div>
-            
-            <div class="form-field-group">
-              <label for="rental-end-date" class="form-field-label">End Date</label>
-              <input 
-                type="date" 
-                id="rental-end-date" 
-                name="endDate" 
-                class="form-field-input" 
-                required
-              />
-            </div>
-            
-            <div class="rental-summary">
-              <p>Duration: <span id="rental-duration">3</span> days</p>
-              <p>New Total: <span id="rental-total-price">5 997:-</span></p>
-            </div>
-            
-            <div class="change-date-error-message" id="change-date-error">
-              <p class="error-text">Error updating rental dates. Please try again.</p>
-            </div>
-          </form>
-        </div>
-        <div class="change-date-footer">
-          <button class="btn save-button" type="submit" form="change-date-form">Save Changes</button>
-          <button class="btn cancel-button" id="cancel-change-date">Cancel</button>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Change Profile Modal (initially hidden) -->
-    <div id="change-profile-modal" class="change-profile-modal">
-      <div class="change-profile-content">
-        <div class="change-profile-header">
-          <h2 class="change-profile-title">Change Profile Information</h2>
-          <button class="close-modal-button">&times;</button>
-        </div>
-        <div class="change-profile-body">
-          <form id="change-profile-form" class="change-profile-form">
-            <div class="form-field-group">
-              <label for="edit-email" class="form-field-label">Email</label>
-              <input 
-                type="email" 
-                id="edit-email" 
-                name="email" 
-                class="form-field-input" 
-                placeholder="Enter your email address" 
-                value="vixilicious@example.com"
-                required
-              />
-            </div>
-            
-            <div class="form-field-group">
-              <label for="edit-phone" class="form-field-label">Phone Number</label>
-              <input 
-                type="tel" 
-                id="edit-phone" 
-                name="phone" 
-                class="form-field-input" 
-                placeholder="Enter your phone number" 
-                value="+46 70 123 4567"
-                required
-              />
-            </div>
-            
-            <div class="form-field-group">
-              <label for="edit-current-password" class="form-field-label">Current Password</label>
-              <input 
-                type="password" 
-                id="edit-current-password" 
-                name="currentPassword" 
-                class="form-field-input" 
-                placeholder="Enter your current password" 
-                required
-              />
-            </div>
-            
-            <div class="form-field-group">
-              <label for="edit-new-password" class="form-field-label">New Password (Optional)</label>
-              <input 
-                type="password" 
-                id="edit-new-password" 
-                name="newPassword" 
-                class="form-field-input" 
-                placeholder="Enter a new password (leave blank to keep current)" 
-              />
-            </div>
-            
-            <div class="form-field-group">
-              <label for="edit-confirm-password" class="form-field-label">Confirm New Password</label>
-              <input 
-                type="password" 
-                id="edit-confirm-password" 
-                name="confirmPassword" 
-                class="form-field-input" 
-                placeholder="Confirm your new password" 
-              />
-            </div>
-            
-            <div class="change-profile-error-message" id="change-profile-error">
-              <p class="error-text">Error updating profile. Please try again.</p>
-            </div>
-          </form>
-        </div>
-        <div class="change-profile-footer">
-          <button class="btn save-button" type="submit" form="change-profile-form">Save Changes</button>
-          <button class="btn cancel-button" id="cancel-change-profile">Cancel</button>
-        </div>
-      </div>
-    </div>
-  </section>
+  </div>
 
-styles/style.css:
-(no code yet)
+  <!-- This content is only shown if the user is logged in -->
+  <div id="user-profile" class="user-profile">
+    <div class="user-header">
+      <h1 class="user-title">My Pages</h1>
+    </div>
 
-index.html:
-
-  <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <aside id="sidebar">
-      <nav class="sidebar-nav">
-        <div class="nav-logo-container">
-          <img
-            src="/images/w-logo-gold.png"
-            alt="Wigell logo"
-            class="nav-logo"
-          />
+    <div class="user-content">
+      <div class="user-info">
+        <div class="user-details">
+          <h2 class="user-name">Vixilicious</h2>
+          <p class="user-email">vixilicious@example.com</p>
+          <p class="user-phone">+46 70 123 4567</p>
+          <button class="btn change-profile-button">Change profile info</button>
         </div>
-        <ul class="nav-links">
-          <li class="nav-item">
-            <a href="#" data-page="index.html" class="nav-link">Home</a>
-          </li>
-          <li class="nav-item">
-            <a href="#" data-page="rental.html" class="nav-link">Rental</a>
-          </li>
-          <li class="nav-item">
-            <a href="#" data-page="login.html" class="nav-link" id="login-link"
-              >Login</a
+      </div>
+
+      <div class="user-rentals">
+        <h2 class="rentals-title">My Rentals</h2>
+
+        <!-- If no rentals exist -->
+        <div id="no-rentals-message" class="no-rentals-message">
+          <p>You don't have any rentals yet.</p>
+          <a href="#" data-page="rental.html" class="btn browse-cars-button"
+            >Browse Cars</a
+          >
+        </div>
+
+        <!-- Rental list (shown if rentals exist) -->
+        <div id="rentals-list" class="rentals-list">
+          <!-- Example rental items (these would be generated dynamically from the API) -->
+          <div class="rental-item">
+            <div class="rental-image">
+              <img
+                src="images/cars/car1-small.jpg"
+                alt="Mercedes-Benz E-Class"
+                class="rental-car-image"
+              />
+            </div>
+            <div class="rental-info">
+              <h3 class="rental-car-name">Mercedes-Benz E-Class</h3>
+              <div class="rental-details">
+                <p class="rental-dates">2025-05-10 — 2025-05-13</p>
+                <p class="rental-duration">3 days</p>
+                <p class="rental-price">Total: 5 997:-</p>
+              </div>
+            </div>
+            <div class="rental-actions">
+              <button class="btn change-date-button" data-rental-id="101">
+                Change date
+              </button>
+            </div>
+          </div>
+
+          <div class="rental-item">
+            <div class="rental-image">
+              <img
+                src="images/cars/car2-small.jpg"
+                alt="BMW X5"
+                class="rental-car-image"
+              />
+            </div>
+            <div class="rental-info">
+              <h3 class="rental-car-name">BMW X5</h3>
+              <div class="rental-details">
+                <p class="rental-dates">2025-04-15 — 2025-04-18</p>
+                <p class="rental-duration">3 days</p>
+                <p class="rental-price">Total: 8 997:-</p>
+              </div>
+            </div>
+            <div class="rental-actions">
+              <button class="btn change-date-button" data-rental-id="102">
+                Change date
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Change Date Modal (initially hidden) -->
+  <div id="change-date-modal" class="change-date-modal">
+    <div class="change-date-content">
+      <div class="change-date-header">
+        <h2 class="change-date-title">Change Rental Dates</h2>
+        <button class="close-modal-button">&times;</button>
+      </div>
+      <div class="change-date-body">
+        <div class="car-info">
+          <h3 class="car-name" id="change-date-car-name">
+            Mercedes-Benz E-Class
+          </h3>
+          <p class="car-price" id="change-date-car-price">1 999:- per day</p>
+        </div>
+        <form id="change-date-form" class="change-date-form">
+          <div class="form-field-group">
+            <label for="rental-start-date" class="form-field-label"
+              >Start Date</label
             >
-          </li>
-          <li class="nav-item">
-            <a href="#" data-page="user.html" class="nav-link">My pages</a>
-          </li>
-        </ul>
-      </nav>
-    </aside>
-    <main class="main-content">
-      <section class="hero-section">
-        <h1 class="main-title">Welcome to Wigells Car rentals</h1>
-        <p>Rent your dream car today!</p>
-        <a href="rental.html">View Cars</a>
-      </section>
-    </main>
-    <footer>
-      <div class="footer-content">
-        <p class="copyright">Copyright &copy; 2023 Wigell Concernens AB</p>
-        <p class="rights">All rights reserved</p>
+            <input
+              type="date"
+              id="rental-start-date"
+              name="startDate"
+              class="form-field-input"
+              required
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="rental-end-date" class="form-field-label"
+              >End Date</label
+            >
+            <input
+              type="date"
+              id="rental-end-date"
+              name="endDate"
+              class="form-field-input"
+              required
+            />
+          </div>
+
+          <div class="rental-summary">
+            <p>Duration: <span id="rental-duration">3</span> days</p>
+            <p>New Total: <span id="rental-total-price">5 997:-</span></p>
+          </div>
+
+          <div class="change-date-error-message" id="change-date-error">
+            <p class="error-text">
+              Error updating rental dates. Please try again.
+            </p>
+          </div>
+        </form>
       </div>
-    </footer>
-  </body>
-</html>
+      <div class="change-date-footer">
+        <button class="btn save-button" type="submit" form="change-date-form">
+          Save Changes
+        </button>
+        <button class="btn cancel-button" id="cancel-change-date">
+          Cancel
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Change Profile Modal (initially hidden) -->
+  <div id="change-profile-modal" class="change-profile-modal">
+    <div class="change-profile-content">
+      <div class="change-profile-header">
+        <h2 class="change-profile-title">Change Profile Information</h2>
+        <button class="close-modal-button">&times;</button>
+      </div>
+      <div class="change-profile-body">
+        <form id="change-profile-form" class="change-profile-form">
+          <div class="form-field-group">
+            <label for="edit-email" class="form-field-label">Email</label>
+            <input
+              type="email"
+              id="edit-email"
+              name="email"
+              class="form-field-input"
+              placeholder="Enter your email address"
+              value="vixilicious@example.com"
+              required
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-phone" class="form-field-label"
+              >Phone Number</label
+            >
+            <input
+              type="tel"
+              id="edit-phone"
+              name="phone"
+              class="form-field-input"
+              placeholder="Enter your phone number"
+              value="+46 70 123 4567"
+              required
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-current-password" class="form-field-label"
+              >Current Password</label
+            >
+            <input
+              type="password"
+              id="edit-current-password"
+              name="currentPassword"
+              class="form-field-input"
+              placeholder="Enter your current password"
+              required
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-new-password" class="form-field-label"
+              >New Password (Optional)</label
+            >
+            <input
+              type="password"
+              id="edit-new-password"
+              name="newPassword"
+              class="form-field-input"
+              placeholder="Enter a new password (leave blank to keep current)"
+            />
+          </div>
+
+          <div class="form-field-group">
+            <label for="edit-confirm-password" class="form-field-label"
+              >Confirm New Password</label
+            >
+            <input
+              type="password"
+              id="edit-confirm-password"
+              name="confirmPassword"
+              class="form-field-input"
+              placeholder="Confirm your new password"
+            />
+          </div>
+
+          <div class="change-profile-error-message" id="change-profile-error">
+            <p class="error-text">Error updating profile. Please try again.</p>
+          </div>
+        </form>
+      </div>
+      <div class="change-profile-footer">
+        <button
+          class="btn save-button"
+          type="submit"
+          form="change-profile-form"
+        >
+          Save Changes
+        </button>
+        <button class="btn cancel-button" id="cancel-change-profile">
+          Cancel
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+js/admin.js:
+/\*\*
+
+- Admin Module for Car Rental Application
+- Handles all admin dashboard functionality
+  \*/
+  const adminModule = (function () {
+  // Debug flag for verbose logging
+  const DEBUG = true;
+
+// Helper function for debug logging
+function logDebug(message, data) {
+if (DEBUG) {
+console.log(`[Admin] ${message}`);
+if (data) console.log(data);
+}
+}
+
+// Error handling helper
+function handleApiError(error, message) {
+console.error(`[Admin Error] ${message}:`, error);
+
+    // Check if the error is an authentication error
+    if (
+      error &&
+      (error.message || "").toLowerCase().includes("authentication")
+    ) {
+      logDebug("Authentication error detected, redirecting to login");
+      alert("Your session has expired. Please log in again.");
+
+      // Clear auth state
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("username");
+      localStorage.removeItem("isAdmin");
+
+      // Redirect to login
+      if (typeof window.loadPage === "function") {
+        window.loadPage("login.html");
+      } else {
+        window.location.href = "login.html";
+      }
+      return;
+    }
+
+    // Regular error handling
+    alert(`${message}. Please try again.`);
+
+}
+
+// Initialize admin dashboard
+function initAdminDashboard() {
+logDebug("Initializing admin dashboard");
+
+    // Check if user is admin based on localStorage
+    const isAdmin = apiModule.authService.isAdmin();
+    logDebug(`Current user is admin according to localStorage: ${isAdmin}`);
+
+    // Show/hide appropriate sections
+    const adminDashboard = document.getElementById("admin-dashboard");
+    const accessDenied = document.getElementById("admin-access-denied");
+
+    if (!isAdmin) {
+      logDebug("Access denied - user is not admin according to localStorage");
+      if (adminDashboard) adminDashboard.style.display = "none";
+      if (accessDenied) accessDenied.style.display = "block";
+
+      // Redirect non-admin users
+      setTimeout(() => {
+        if (typeof window.loadPage === "function") {
+          window.loadPage("cars.html");
+        } else {
+          window.location.href = "cars.html";
+        }
+      }, 2000);
+
+      return; // Stop initialization if not admin
+    } else {
+      if (adminDashboard) adminDashboard.style.display = "block";
+      if (accessDenied) accessDenied.style.display = "none";
+    }
+
+    // Verify admin privileges by trying to access admin-only data
+    logDebug("Verifying admin privileges with API call");
+
+    // Try to get all users (admin-only action)
+    apiModule.userService
+      .getAllUsers()
+      .then((users) => {
+        logDebug("Admin verification successful - able to fetch users", {
+          userCount: users.length,
+        });
+
+        // Setup tab navigation
+        setupTabNavigation();
+
+        // Setup admin page content
+        loadAdminUsers();
+        loadAdminCars();
+        loadAdminBookings();
+        setupModalCloseButtons();
+      })
+      .catch((error) => {
+        handleApiError(error, "Failed to verify admin status");
+
+        // Hide admin dashboard on verification error
+        if (adminDashboard) adminDashboard.style.display = "none";
+        if (accessDenied) accessDenied.style.display = "block";
+
+        // Clear admin status in localStorage since API call failed
+        localStorage.setItem("isAdmin", "false");
+      });
+
+}
+
+// Setup tab navigation
+function setupTabNavigation() {
+logDebug("Setting up tab navigation");
+const tabButtons = document.querySelectorAll(".tab-button");
+const tabContents = document.querySelectorAll(".admin-tab-content");
+
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        // Remove active class from all buttons and tabs
+        tabButtons.forEach((btn) => btn.classList.remove("active"));
+        tabContents.forEach((tab) => tab.classList.remove("active"));
+
+        // Add active class to clicked button
+        this.classList.add("active");
+
+        // Show the corresponding tab content
+        const tabId = this.getAttribute("data-tab");
+        const tabContent = document.getElementById(tabId);
+        if (tabContent) {
+          tabContent.classList.add("active");
+        }
+      });
+    });
+
+}
+
+// Load users for the admin dashboard
+function loadAdminUsers() {
+logDebug("Loading users for admin dashboard");
+const userTable = document.querySelector("#users-tab table tbody");
+if (!userTable) {
+logDebug("User table not found in DOM");
+return;
+}
+
+    userTable.innerHTML = '<tr><td colspan="6">Loading users...</td></tr>';
+
+    // Get all users from API
+    apiModule.userService
+      .getAllUsers()
+      .then((users) => {
+        logDebug(`Retrieved ${users.length} users`);
+        userTable.innerHTML = "";
+
+        if (users.length === 0) {
+          userTable.innerHTML = '<tr><td colspan="6">No users found</td></tr>';
+          return;
+        }
+
+        // Create table rows for each user
+        users.forEach((user) => {
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+            <td>${user.id}</td>
+            <td>${user.username}</td>
+            <td>${user.email || "-"}</td>
+            <td>${user.phone || "-"}</td>
+            <td>${user.role || "USER"}</td>
+            <td>
+              <button class="btn view-button" data-user-id="${
+                user.id
+              }">View Bookings</button>
+              <button class="btn delete-button" data-user-id="${user.id}" ${
+            user.role === "ROLE_ADMIN" ? "disabled" : ""
+          }>Delete User</button>
+            </td>
+          `;
+
+          userTable.appendChild(row);
+        });
+
+        // Setup view booking buttons
+        setupViewBookingButtons();
+
+        // Setup delete user buttons
+        setupDeleteUserButtons();
+      })
+      .catch((error) => {
+        handleApiError(error, "Error loading users");
+        userTable.innerHTML =
+          '<tr><td colspan="6">Error loading users</td></tr>';
+      });
+
+}
+
+// Function to set up view booking buttons
+function setupViewBookingButtons() {
+logDebug("Setting up view booking buttons");
+const viewButtons = document.querySelectorAll("#users-tab .view-button");
+const modal = document.getElementById("user-bookings-modal");
+if (!modal) return;
+
+    viewButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const userId = this.getAttribute("data-user-id");
+        logDebug(`View bookings clicked for user ID: ${userId}`);
+
+        // Show loading state in modal
+        const bookingsList = document.getElementById("user-bookings-list");
+        if (bookingsList) {
+          bookingsList.innerHTML =
+            '<tr><td colspan="6">Loading bookings...</td></tr>';
+        }
+
+        // Show modal early to provide feedback
+        modal.style.display = "block";
+
+        // Get user details first
+        apiModule.userService
+          .getUserById(userId)
+          .then((user) => {
+            logDebug("Retrieved user details", user);
+
+            const usernameEl = document.getElementById("modal-username");
+            const emailEl = document.getElementById("modal-user-email");
+
+            if (usernameEl) usernameEl.textContent = user.username;
+            if (emailEl)
+              emailEl.textContent = user.email || "No email provided";
+
+            // Then get bookings
+            return apiModule.bookingService.getUserBookings(userId);
+          })
+          .then((bookings) => {
+            logDebug(`Retrieved ${bookings.length} bookings`);
+
+            if (!bookingsList) return;
+            bookingsList.innerHTML = "";
+
+            if (bookings.length === 0) {
+              bookingsList.innerHTML =
+                '<tr><td colspan="6">No bookings found</td></tr>';
+            } else {
+              bookings.forEach((booking) => {
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                  <td>${booking.id}</td>
+                  <td>${
+                    booking.car
+                      ? booking.car.name + " " + booking.car.model
+                      : "Unknown"
+                  }</td>
+                  <td>${new Date(booking.startDate).toLocaleDateString()}</td>
+                  <td>${new Date(booking.endDate).toLocaleDateString()}</td>
+                  <td>${booking.totalPrice}:-</td>
+                  <td>
+                    <button class="btn edit-button" data-booking-id="${
+                      booking.id
+                    }">Edit</button>
+                    <button class="btn delete-button" data-booking-id="${
+                      booking.id
+                    }">Delete</button>
+                  </td>
+                `;
+
+                bookingsList.appendChild(row);
+              });
+
+              // Setup edit and delete booking buttons in modal
+              setupEditBookingButtons(bookingsList);
+              setupDeleteBookingButtons(bookingsList);
+            }
+          })
+          .catch((error) => {
+            handleApiError(error, "Error fetching user bookings");
+
+            if (bookingsList) {
+              bookingsList.innerHTML =
+                '<tr><td colspan="6">Error loading bookings</td></tr>';
+            }
+          });
+      });
+    });
+
+}
+
+// Function to set up delete user buttons
+function setupDeleteUserButtons() {
+logDebug("Setting up delete user buttons");
+const deleteButtons = document.querySelectorAll(
+"#users-tab .delete-button:not([disabled])"
+);
+
+    deleteButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const userId = this.getAttribute("data-user-id");
+        logDebug(`Delete user clicked for user ID: ${userId}`);
+
+        // Show confirmation dialog
+        confirmAction(
+          "Are you sure you want to delete this user? This action cannot be undone.",
+          function () {
+            logDebug("User deletion confirmed, proceeding with deletion");
+
+            // Execute delete on confirmation
+            apiModule.userService
+              .deleteUser(userId)
+              .then(() => {
+                logDebug("User deleted successfully");
+                loadAdminUsers();
+                alert("User deleted successfully!");
+              })
+              .catch((error) => {
+                handleApiError(error, "Error deleting user");
+              });
+          }
+        );
+      });
+    });
+
+}
+
+// Load cars for the admin dashboard
+function loadAdminCars() {
+logDebug("Loading cars for admin dashboard");
+const carTable = document.querySelector("#cars-tab table tbody");
+if (!carTable) {
+logDebug("Car table not found in DOM");
+return;
+}
+
+    carTable.innerHTML = '<tr><td colspan="7">Loading cars...</td></tr>';
+
+    // Get all cars from API
+    apiModule.carService
+      .getAllCars()
+      .then((cars) => {
+        logDebug(`Retrieved ${cars.length} cars`);
+        carTable.innerHTML = "";
+
+        if (cars.length === 0) {
+          carTable.innerHTML = '<tr><td colspan="7">No cars found</td></tr>';
+          return;
+        }
+
+        // Create table rows for each car
+        cars.forEach((car) => {
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+            <td>${car.id}</td>
+            <td>${car.name}</td>
+            <td>${car.model}</td>
+            <td>${car.type}</td>
+            <td>${car.price}:-</td>
+            <td>${car.booked ? "Rented" : "Available"}</td>
+            <td>
+              <button class="btn edit-button" data-car-id="${
+                car.id
+              }">Edit</button>
+              <button class="btn delete-button" data-car-id="${
+                car.id
+              }">Delete</button>
+            </td>
+          `;
+
+          carTable.appendChild(row);
+        });
+
+        // Setup edit car buttons
+        setupEditCarButtons();
+
+        // Setup delete car buttons
+        setupDeleteCarButtons();
+      })
+      .catch((error) => {
+        handleApiError(error, "Error loading cars");
+        carTable.innerHTML = '<tr><td colspan="7">Error loading cars</td></tr>';
+      });
+
+    // Setup add car button
+    setupAddCarButton();
+
+}
+
+// Load bookings for the admin dashboard
+function loadAdminBookings() {
+logDebug("Loading bookings for admin dashboard");
+const bookingTable = document.querySelector("#bookings-tab table tbody");
+if (!bookingTable) {
+logDebug("Booking table not found in DOM");
+return;
+}
+
+    bookingTable.innerHTML =
+      '<tr><td colspan="7">Loading bookings...</td></tr>';
+
+    // Get all bookings from API
+    apiModule.bookingService
+      .getAllBookings()
+      .then((bookings) => {
+        logDebug(`Retrieved ${bookings.length} bookings`);
+        bookingTable.innerHTML = "";
+
+        if (bookings.length === 0) {
+          bookingTable.innerHTML =
+            '<tr><td colspan="7">No bookings found</td></tr>';
+          return;
+        }
+
+        // Create table rows for each booking
+        bookings.forEach((booking) => {
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+            <td>${booking.id}</td>
+            <td>${booking.user ? booking.user.username : "Unknown"}</td>
+            <td>${
+              booking.car
+                ? booking.car.name + " " + booking.car.model
+                : "Unknown"
+            }</td>
+            <td>${new Date(booking.startDate).toLocaleDateString()}</td>
+            <td>${new Date(booking.endDate).toLocaleDateString()}</td>
+            <td>${booking.totalPrice}:-</td>
+            <td>
+              <button class="btn edit-button" data-booking-id="${
+                booking.id
+              }">Edit</button>
+              <button class="btn delete-button" data-booking-id="${
+                booking.id
+              }">Delete</button>
+            </td>
+          `;
+
+          bookingTable.appendChild(row);
+        });
+
+        // Setup edit booking buttons
+        setupEditBookingButtons(bookingTable);
+
+        // Setup delete booking buttons
+        setupDeleteBookingButtons(bookingTable);
+      })
+      .catch((error) => {
+        handleApiError(error, "Error loading bookings");
+        bookingTable.innerHTML =
+          '<tr><td colspan="7">Error loading bookings</td></tr>';
+      });
+
+}
+
+// Function to set up edit booking buttons
+function setupEditBookingButtons(container) {
+logDebug("Setting up edit booking buttons");
+const editButtons = container.querySelectorAll(".edit-button");
+const modal = document.getElementById("edit-booking-modal");
+if (!modal) return;
+
+    editButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const bookingId = this.getAttribute("data-booking-id");
+        logDebug(`Edit booking clicked for booking ID: ${bookingId}`);
+
+        // Show loading state in modal
+        const form = document.getElementById("edit-booking-form");
+        if (form) {
+          for (const el of form.elements) {
+            if (el.type !== "submit" && el.type !== "button") {
+              el.disabled = true;
+            }
+          }
+        }
+
+        modal.style.display = "block";
+
+        // Get booking details
+        apiModule.bookingService
+          .getBookingById(bookingId)
+          .then((booking) => {
+            logDebug("Retrieved booking details", booking);
+
+            // Populate form fields
+            const carInput = document.getElementById("edit-booking-car");
+            const startDateInput = document.getElementById(
+              "edit-booking-start-date"
+            );
+            const endDateInput = document.getElementById(
+              "edit-booking-end-date"
+            );
+
+            if (!carInput || !startDateInput || !endDateInput || !form) {
+              logDebug("Required form elements not found");
+              return;
+            }
+
+            // Enable form elements
+            for (const el of form.elements) {
+              if (el.type !== "submit" && el.type !== "button") {
+                el.disabled = false;
+              }
+            }
+
+            carInput.value = booking.car.id;
+            startDateInput.value = booking.startDate.split("T")[0];
+            endDateInput.value = booking.endDate.split("T")[0];
+
+            // Calculate and display booking summary
+            updateBookingSummary(
+              booking.car.price,
+              booking.startDate,
+              booking.endDate
+            );
+
+            // Add hidden booking ID field if it doesn't exist
+            let idInput = document.getElementById("edit-booking-id");
+            if (!idInput) {
+              idInput = document.createElement("input");
+              idInput.type = "hidden";
+              idInput.id = "edit-booking-id";
+              idInput.name = "id";
+              form.appendChild(idInput);
+            }
+            idInput.value = bookingId;
+
+            // Add event listeners for date changes
+            setupDateChangeListeners(booking.car.price);
+
+            // Setup form submission
+            setupEditBookingForm();
+          })
+          .catch((error) => {
+            handleApiError(error, "Error fetching booking details");
+            modal.style.display = "none";
+          });
+      });
+    });
+
+}
+
+// Function to set up delete booking buttons
+function setupDeleteBookingButtons(container) {
+logDebug("Setting up delete booking buttons");
+const deleteButtons = container.querySelectorAll(".delete-button");
+
+    deleteButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const bookingId = this.getAttribute("data-booking-id");
+        logDebug(`Delete booking clicked for booking ID: ${bookingId}`);
+
+        // Show confirmation dialog
+        confirmAction(
+          "Are you sure you want to delete this booking? This action cannot be undone.",
+          function () {
+            logDebug("Booking deletion confirmed, proceeding with deletion");
+
+            // Execute delete on confirmation
+            apiModule.bookingService
+              .deleteBooking(bookingId)
+              .then(() => {
+                logDebug("Booking deleted successfully");
+                loadAdminBookings();
+                alert("Booking deleted successfully!");
+              })
+              .catch((error) => {
+                handleApiError(error, "Error deleting booking");
+              });
+          }
+        );
+      });
+    });
+
+}
+
+// Function to update booking summary
+function updateBookingSummary(dailyRate, startDate, endDate) {
+const start = new Date(startDate);
+const end = new Date(endDate);
+const days = Math.max(1, Math.round((end - start) / (1000 _ 60 _ 60 _ 24)));
+const totalPrice = days _ dailyRate;
+
+    const durationEl = document.getElementById("edit-booking-duration");
+    const rateEl = document.getElementById("edit-booking-daily-rate");
+    const priceEl = document.getElementById("edit-booking-total-price");
+
+    if (durationEl)
+      durationEl.textContent = `${days} day${days > 1 ? "s" : ""}`;
+    if (rateEl) rateEl.textContent = `${dailyRate}:-`;
+    if (priceEl) priceEl.textContent = `${totalPrice}:-`;
+
+}
+
+// Function to set up date change listeners
+function setupDateChangeListeners(dailyRate) {
+const startDateInput = document.getElementById("edit-booking-start-date");
+const endDateInput = document.getElementById("edit-booking-end-date");
+const carSelect = document.getElementById("edit-booking-car");
+
+    if (!startDateInput || !endDateInput || !carSelect) return;
+
+    const updateListener = function () {
+      const startDate = startDateInput.value;
+      const endDate = endDateInput.value;
+
+      if (startDate && endDate) {
+        // Fetch selected car's rate
+        apiModule.carService
+          .getCarById(carSelect.value)
+          .then((car) => {
+            updateBookingSummary(car.price, startDate, endDate);
+          })
+          .catch((error) => {
+            console.error("Error fetching car details:", error);
+            // Fallback to using the provided rate
+            updateBookingSummary(dailyRate, startDate, endDate);
+          });
+      }
+    };
+
+    startDateInput.addEventListener("change", updateListener);
+    endDateInput.addEventListener("change", updateListener);
+    carSelect.addEventListener("change", updateListener);
+
+}
+
+// Function to set up edit booking form submission
+function setupEditBookingForm() {
+const form = document.getElementById("edit-booking-form");
+if (!form) return;
+
+    // Remove existing event listeners
+    const newForm = form.cloneNode(true);
+    form.parentNode.replaceChild(newForm, form);
+
+    newForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const bookingId = document.getElementById("edit-booking-id").value;
+      const carId = document.getElementById("edit-booking-car").value;
+      const startDate = document.getElementById(
+        "edit-booking-start-date"
+      ).value;
+      const endDate = document.getElementById("edit-booking-end-date").value;
+
+      logDebug("Booking form submitted", {
+        bookingId,
+        carId,
+        startDate,
+        endDate,
+      });
+
+      // Validate dates
+      if (new Date(startDate) > new Date(endDate)) {
+        alert("Start date must be before end date.");
+        return;
+      }
+
+      // Prepare booking data
+      const bookingData = {
+        carId: parseInt(carId),
+        startDate,
+        endDate,
+      };
+
+      // Update booking
+      apiModule.bookingService
+        .updateBooking(bookingId, bookingData)
+        .then(() => {
+          logDebug("Booking updated successfully");
+
+          // Hide modal
+          document.getElementById("edit-booking-modal").style.display = "none";
+
+          // Reload bookings
+          loadAdminBookings();
+
+          // Show success message
+          alert("Booking updated successfully!");
+        })
+        .catch((error) => {
+          handleApiError(error, "Error updating booking");
+        });
+    });
+
+}
+
+// Function to set up edit car buttons
+function setupEditCarButtons() {
+logDebug("Setting up edit car buttons");
+const editButtons = document.querySelectorAll("#cars-tab .edit-button");
+const modal = document.getElementById("edit-car-modal");
+if (!modal) return;
+
+    editButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const carId = this.getAttribute("data-car-id");
+        logDebug(`Edit car clicked for car ID: ${carId}`);
+
+        // Show loading state in modal
+        const form = document.getElementById("edit-car-form");
+        if (form) {
+          for (const el of form.elements) {
+            if (el.type !== "submit" && el.type !== "button") {
+              el.disabled = true;
+            }
+          }
+        }
+
+        modal.style.display = "block";
+
+        // Fetch car details to populate the edit form
+        apiModule.carService
+          .getCarById(carId)
+          .then((car) => {
+            logDebug("Retrieved car details", car);
+
+            // Set the modal title to "Edit Car"
+            const titleEl = document.getElementById("car-modal-title");
+
+            if (!titleEl || !form) {
+              logDebug("Required form elements not found");
+              return;
+            }
+
+            // Enable form elements
+            for (const el of form.elements) {
+              if (el.type !== "submit" && el.type !== "button") {
+                el.disabled = false;
+              }
+            }
+
+            titleEl.textContent = "Edit Car";
+
+            // Add a hidden input for car ID if it doesn't exist
+            let idInput = document.getElementById("edit-car-id");
+            if (!idInput) {
+              idInput = document.createElement("input");
+              idInput.type = "hidden";
+              idInput.id = "edit-car-id";
+              idInput.name = "id";
+              form.appendChild(idInput);
+            }
+
+            // Set car ID in the hidden field
+            idInput.value = car.id;
+
+            // Fill the form with car details
+            const fields = {
+              "edit-car-brand": car.name,
+              "edit-car-model": car.model,
+              "edit-car-type": car.type.toLowerCase(),
+              "edit-car-price": car.price,
+              "edit-car-feature1": car.feature1,
+              "edit-car-feature2": car.feature2,
+              "edit-car-feature3": car.feature3,
+            };
+
+            Object.keys(fields).forEach((id) => {
+              const el = document.getElementById(id);
+              if (el) el.value = fields[id] || "";
+            });
+
+            // Setup form submission
+            setupCarFormSubmit();
+          })
+          .catch((error) => {
+            handleApiError(error, "Error fetching car details");
+            modal.style.display = "none";
+          });
+      });
+    });
+
+}
+
+// Function to set up the add car button
+function setupAddCarButton() {
+logDebug("Setting up add car button");
+const addButton = document.querySelector("#cars-tab .add-button");
+const modal = document.getElementById("edit-car-modal");
+if (!addButton || !modal) return;
+
+    addButton.addEventListener("click", function () {
+      logDebug("Add car button clicked");
+
+      // Set the modal title to "Add New Car"
+      const titleEl = document.getElementById("car-modal-title");
+      const form = document.getElementById("edit-car-form");
+
+      if (!titleEl || !form) return;
+
+      titleEl.textContent = "Add New Car";
+
+      // Reset the form fields
+      form.reset();
+
+      // Remove any existing hidden ID field or set it to empty
+      let idInput = document.getElementById("edit-car-id");
+      if (idInput) {
+        idInput.value = "";
+      }
+
+      // Show the modal
+      modal.style.display = "block";
+
+      // Setup form submission
+      setupCarFormSubmit();
+    });
+
+}
+
+// Function to handle car form submission
+function setupCarFormSubmit() {
+const carForm = document.getElementById("edit-car-form");
+if (!carForm) return;
+
+    // Remove existing event listeners
+    const newForm = carForm.cloneNode(true);
+    carForm.parentNode.replaceChild(newForm, carForm);
+
+    newForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      // Get form data
+      const formData = {
+        name: document.getElementById("edit-car-brand").value,
+        model: document.getElementById("edit-car-model").value,
+        type: document.getElementById("edit-car-type").value,
+        price: parseFloat(document.getElementById("edit-car-price").value),
+        feature1: document.getElementById("edit-car-feature1").value,
+        feature2: document.getElementById("edit-car-feature2").value,
+        feature3: document.getElementById("edit-car-feature3").value,
+      };
+
+      logDebug("Car form submitted", formData);
+
+      // Get image URL if provided
+      const imageInput = document.getElementById("edit-car-image");
+      if (imageInput && imageInput.value) {
+        formData.imageUrl = imageInput.value;
+      }
+
+      // Check if we're editing an existing car or adding a new one
+      const carIdElement = document.getElementById("edit-car-id");
+      const carId = carIdElement ? carIdElement.value : null;
+
+      const apiCall = carId
+        ? apiModule.carService.updateCar(carId, formData)
+        : apiModule.carService.createCar(formData);
+
+      apiCall
+        .then(() => {
+          logDebug(
+            carId ? "Car updated successfully" : "Car added successfully"
+          );
+
+          // Hide the modal
+          document.getElementById("edit-car-modal").style.display = "none";
+
+          // Reload the cars list
+          loadAdminCars();
+
+          // Show success message
+          alert(
+            carId ? "Car updated successfully!" : "Car added successfully!"
+          );
+        })
+        .catch((error) => {
+          handleApiError(error, "Error saving car");
+        });
+    });
+
+}
+
+// Function to set up delete car buttons
+function setupDeleteCarButtons() {
+logDebug("Setting up delete car buttons");
+const deleteButtons = document.querySelectorAll("#cars-tab .delete-button");
+
+    deleteButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const carId = this.getAttribute("data-car-id");
+        logDebug(`Delete car clicked for car ID: ${carId}`);
+
+        // Show confirmation dialog
+        confirmAction(
+          "Are you sure you want to delete this car? This action cannot be undone.",
+          function () {
+            logDebug("Car deletion confirmed, proceeding with deletion");
+
+            // Execute delete on confirmation
+            apiModule.carService
+              .deleteCar(carId)
+              .then(() => {
+                logDebug("Car deleted successfully");
+                loadAdminCars();
+                alert("Car deleted successfully!");
+              })
+              .catch((error) => {
+                handleApiError(error, "Error deleting car");
+              });
+          }
+        );
+      });
+    });
+
+}
+
+// Helper function for confirmation dialogs
+function confirmAction(message, onConfirm) {
+const confirmModal = document.getElementById("confirm-delete-modal");
+
+    if (confirmModal) {
+      // Set the confirmation message
+      const messageEl = document.getElementById("delete-confirmation-message");
+      if (messageEl) messageEl.textContent = message;
+
+      // Show the modal
+      confirmModal.style.display = "block";
+
+      // Set up the confirm button
+      const confirmButton = confirmModal.querySelector(
+        ".delete-confirm-button"
+      );
+      const cancelButton = confirmModal.querySelector(".cancel-button");
+      const closeButton = confirmModal.querySelector(".close-modal-button");
+
+      if (!confirmButton || !cancelButton || !closeButton) {
+        // Fallback to native confirm
+        if (confirm(message)) {
+          onConfirm();
+        }
+        return;
+      }
+
+      // Remove any existing event listeners using cloning
+      const newConfirmButton = confirmButton.cloneNode(true);
+      confirmButton.parentNode.replaceChild(newConfirmButton, confirmButton);
+
+      const newCancelButton = cancelButton.cloneNode(true);
+      cancelButton.parentNode.replaceChild(newCancelButton, cancelButton);
+
+      const newCloseButton = closeButton.cloneNode(true);
+      closeButton.parentNode.replaceChild(newCloseButton, closeButton);
+
+      // Add new event listeners
+      newConfirmButton.addEventListener("click", function () {
+        confirmModal.style.display = "none";
+        onConfirm();
+      });
+
+      newCancelButton.addEventListener("click", function () {
+        confirmModal.style.display = "none";
+      });
+
+      newCloseButton.addEventListener("click", function () {
+        confirmModal.style.display = "none";
+      });
+    } else {
+      // Fallback to native confirm
+      if (confirm(message)) {
+        onConfirm();
+      }
+    }
+
+}
+
+// Setup modal close buttons
+function setupModalCloseButtons() {
+logDebug("Setting up modal close buttons");
+// Get all modals
+const modals = document.querySelectorAll(".admin-modal");
+
+    modals.forEach((modal) => {
+      // Get close buttons within this modal
+      const closeButtons = modal.querySelectorAll(
+        ".close-modal-button, .cancel-button"
+      );
+
+      closeButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+          modal.style.display = "none";
+        });
+      });
+
+      // Close modal when clicking outside the content
+      window.addEventListener("click", function (event) {
+        if (event.target === modal) {
+          modal.style.display = "none";
+        }
+      });
+    });
+
+}
+
+// Setup admin page with data
+function setupAdminPage() {
+logDebug("Setting up admin page");
+
+    // Verify that the user is logged in and is an admin
+    if (!apiModule.authService.isLoggedIn()) {
+      logDebug("User not logged in, redirecting to login");
+
+      // Save current page for redirect after login
+      sessionStorage.setItem("redirectAfterLogin", "admin.html");
+
+      // Redirect to login
+      if (typeof window.loadPage === "function") {
+        window.loadPage("login.html");
+      } else {
+        window.location.href = "login.html";
+      }
+      return;
+    }
+
+    if (!apiModule.authService.isAdmin()) {
+      logDebug("User not admin, redirecting to cars");
+      alert("You do not have administrator privileges.");
+
+      // Redirect to cars page
+      if (typeof window.loadPage === "function") {
+        window.loadPage("cars.html");
+      } else {
+        window.location.href = "cars.html";
+      }
+      return;
+    }
+
+    // Initialize admin dashboard
+    initAdminDashboard();
+
+}
+
+// Return public methods
+return {
+setupAdminPage,
+loadAdminUsers,
+loadAdminCars,
+loadAdminBookings,
+};
+})();
+
+// Export the module for use in other scripts
+window.adminModule = adminModule;
+
+js/api.js:
+/\*\*
+
+- API Module for Car Rental Application
+- Manages all API calls and authentication
+  \*/
+  const apiModule = (function () {
+  // Configuration
+  const API_BASE_URL = "http://localhost:8080/api/v1";
+  const DEBUG = true;
+
+// Log helper
+function log(message, data) {
+if (DEBUG) {
+console.log(`[API] ${message}`);
+if (data !== undefined) console.log(data);
+}
+}
+
+// General API call function with proper credentials handling
+async function callApi(endpoint, method = "GET", data = null) {
+const url = `${API_BASE_URL}${endpoint}`;
+
+    // Setup request options with credentials
+    const options = {
+      method: method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // This is critical - it tells fetch to include cookies
+    };
+
+    // Add body data for non-GET requests
+    if (data && method !== "GET") {
+      options.body = JSON.stringify(data);
+    }
+
+    log(`Making ${method} request to: ${url}`);
+
+    try {
+      const response = await fetch(url, options);
+      log(`Response status: ${response.status}`);
+
+      // Handle no content responses
+      if (response.status === 204) {
+        return null;
+      }
+
+      // Get response text
+      const text = await response.text();
+      log(`Response text length: ${text ? text.length : 0} chars`);
+
+      if (text && text.length < 1000) {
+        log(`Response text: ${text}`);
+      }
+
+      // Parse JSON if present
+      let responseData = null;
+      if (text) {
+        try {
+          responseData = JSON.parse(text);
+        } catch (e) {
+          log("Response is not JSON");
+          responseData = text;
+        }
+      }
+
+      // Check if request was successful
+      if (!response.ok) {
+        // Specifically handle 401 Unauthorized
+        if (response.status === 401) {
+          log("Unauthorized access - clearing authentication state");
+          // Clear auth data
+          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("username");
+          localStorage.removeItem("isAdmin");
+          localStorage.removeItem("userId");
+
+          // Redirect to login page
+          if (
+            typeof window.app !== "undefined" &&
+            typeof window.app.loadPage === "function"
+          ) {
+            setTimeout(() => {
+              window.app.loadPage("login.html");
+            }, 100);
+          } else {
+            window.location.href = "login.html";
+          }
+        }
+
+        throw {
+          status: response.status,
+          statusText: response.statusText,
+          data: responseData,
+        };
+      }
+
+      return responseData;
+    } catch (error) {
+      log("API call failed: ", error);
+      throw error;
+    }
+
+}
+
+// Auth Service
+const authService = {
+// Check if user is logged in
+isLoggedIn: function () {
+return localStorage.getItem("isLoggedIn") === "true";
+},
+
+    // Check if user is admin
+    isAdmin: function () {
+      return localStorage.getItem("isAdmin") === "true";
+    },
+
+    // Get username
+    getUsername: function () {
+      return localStorage.getItem("username") || "Guest";
+    },
+
+    // Get user ID
+    getUserId: function () {
+      return localStorage.getItem("userId");
+    },
+
+    // Login function - using direct fetch approach that we know works
+    login: async function (username, password) {
+      log(`Attempting login with username: ${username}`);
+      log(`Using API endpoint: ${API_BASE_URL}/auth/login`);
+
+      try {
+        // Make login request
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+          credentials: "include", // Important for cookies
+        });
+
+        log(`Login response status: ${response.status}`);
+
+        // Check for cookies
+        const cookies = document.cookie;
+        log("Cookies after login: ", cookies);
+
+        // Get response text
+        const text = await response.text();
+        log(`Login response text: ${text}`);
+
+        // Check if request was successful
+        if (!response.ok) {
+          throw new Error(
+            `Login failed with status ${response.status}: ${response.statusText}`
+          );
+        }
+
+        // Parse response if JSON
+        let data = null;
+        if (text) {
+          try {
+            data = JSON.parse(text);
+            log("Login successful, parsed data:", data);
+          } catch (e) {
+            log("Response is not JSON, using text");
+            data = { message: text };
+          }
+        } else {
+          // If no response text but successful status, create minimal data
+          data = { username: username };
+        }
+
+        // Store authentication data in localStorage
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("username", username);
+        localStorage.setItem(
+          "isAdmin",
+          data.isAdmin === true ? "true" : "false"
+        );
+
+        log("Authentication data stored in localStorage");
+
+        return data;
+      } catch (error) {
+        log("Login error:", error);
+        throw error;
+      }
+    },
+
+    // Logout function
+    logout: async function () {
+      log("Logging out user");
+
+      // Clear authentication data
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("username");
+      localStorage.removeItem("isAdmin");
+      localStorage.removeItem("userId");
+
+      // Clear cookies
+      document.cookie.split(";").forEach(function (c) {
+        document.cookie = c
+          .replace(/^ +/, "")
+          .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      });
+
+      log("Authentication data cleared from localStorage");
+      return { success: true };
+    },
+
+    // Register function
+    register: async function (userData) {
+      log("Registering new user:", userData);
+
+      try {
+        // Use the users endpoint instead of auth/register since that's what the backend has
+        const data = await callApi("/users", "POST", userData);
+        log("Registration successful:", data);
+        return data;
+      } catch (error) {
+        log("Registration error:", error);
+        throw error;
+      }
+    },
+
+    // Verify authentication
+    verifyAuth: async function () {
+      log("Verifying authentication status");
+
+      // If we're not logged in according to localStorage, no need to verify
+      if (!this.isLoggedIn()) {
+        log("Not logged in according to localStorage");
+        return false;
+      }
+
+      try {
+        // Perform a simple API call to check auth
+        await callApi("/users/current", "GET");
+        log("Authentication verified successfully");
+        return true;
+      } catch (error) {
+        // 401 means not authenticated
+        if (error.status === 401) {
+          log("Authentication verification failed - user is not logged in");
+          return false;
+        }
+
+        // 403 means authenticated but not authorized
+        if (error.status === 403) {
+          log(
+            "Authentication verified but access denied to requested resource"
+          );
+          return true;
+        }
+
+        log("Authentication verification error:", error);
+        return false;
+      }
+    },
+
+};
+
+// User Service
+const userService = {
+// Get current user profile info
+getCurrentUser: async function () {
+log("Fetching current user profile");
+
+      try {
+        const data = await callApi("/users/current", "GET");
+        log("Current user data:", data);
+
+        // Store user ID if provided
+        if (data && data.id) {
+          localStorage.setItem("userId", data.id);
+        }
+
+        return data;
+      } catch (error) {
+        log("Error fetching current user:", error);
+        throw error;
+      }
+    },
+
+    // Get user by ID
+    getUserById: async function (userId) {
+      log(`Fetching user with ID: ${userId}`);
+
+      try {
+        const data = await callApi(`/users/${userId}`, "GET");
+        log("User data:", data);
+        return data;
+      } catch (error) {
+        log("Error fetching user:", error);
+        throw error;
+      }
+    },
+
+    // Get all users (admin only)
+    getAllUsers: async function () {
+      log("Fetching all users (admin function)");
+
+      try {
+        const data = await callApi("/users", "GET");
+        log(`Retrieved ${data.length} users`);
+        return data;
+      } catch (error) {
+        log("Error fetching users:", error);
+        throw error;
+      }
+    },
+
+    // Update user
+    updateUser: async function (userId, userData) {
+      log(`Updating user with ID: ${userId}`);
+
+      try {
+        const data = await callApi(`/users/${userId}`, "PUT", userData);
+        log("Update successful:", data);
+        return data;
+      } catch (error) {
+        log("Error updating user:", error);
+        throw error;
+      }
+    },
+
+    // Delete user (admin only)
+    deleteUser: async function (userId) {
+      log(`Deleting user with ID: ${userId}`);
+
+      try {
+        const data = await callApi(`/users/${userId}`, "DELETE");
+        log("Delete successful:", data);
+        return data;
+      } catch (error) {
+        log("Error deleting user:", error);
+        throw error;
+      }
+    },
+
+};
+
+// Car Service
+const carService = {
+// Get all cars
+getAllCars: async function () {
+log("Fetching all cars");
+
+      try {
+        const data = await callApi("/cars", "GET");
+        log(`Retrieved ${data.length} cars`);
+        return data;
+      } catch (error) {
+        log("Error fetching cars:", error);
+        throw error;
+      }
+    },
+
+    // Get car by ID
+    getCarById: async function (carId) {
+      log(`Fetching car with ID: ${carId}`);
+
+      try {
+        const data = await callApi(`/cars/${carId}`, "GET");
+        log("Car data:", data);
+        return data;
+      } catch (error) {
+        log("Error fetching car:", error);
+        throw error;
+      }
+    },
+
+    // Create car (admin only)
+    createCar: async function (carData) {
+      log("Creating new car");
+
+      try {
+        const data = await callApi("/cars", "POST", carData);
+        log("Creation successful:", data);
+        return data;
+      } catch (error) {
+        log("Error creating car:", error);
+        throw error;
+      }
+    },
+
+    // Update car (admin only)
+    updateCar: async function (carId, carData) {
+      log(`Updating car with ID: ${carId}`);
+
+      try {
+        const data = await callApi(`/cars/${carId}`, "PUT", carData);
+        log("Update successful:", data);
+        return data;
+      } catch (error) {
+        log("Error updating car:", error);
+        throw error;
+      }
+    },
+
+    // Delete car (admin only)
+    deleteCar: async function (carId) {
+      log(`Deleting car with ID: ${carId}`);
+
+      try {
+        const data = await callApi(`/cars/${carId}`, "DELETE");
+        log("Delete successful:", data);
+        return data;
+      } catch (error) {
+        log("Error deleting car:", error);
+        throw error;
+      }
+    },
+
+};
+
+// Booking Service
+const bookingService = {
+// Get all bookings (admin only)
+getAllBookings: async function () {
+log("Fetching all bookings (admin function)");
+
+      try {
+        const data = await callApi("/bookings", "GET");
+        log(`Retrieved ${data.length} bookings`);
+        return data;
+      } catch (error) {
+        log("Error fetching bookings:", error);
+        throw error;
+      }
+    },
+
+    // Get booking by ID
+    getBookingById: async function (bookingId) {
+      log(`Fetching booking with ID: ${bookingId}`);
+
+      try {
+        const data = await callApi(`/bookings/${bookingId}`, "GET");
+        log("Booking data:", data);
+        return data;
+      } catch (error) {
+        log("Error fetching booking:", error);
+        throw error;
+      }
+    },
+
+    // Create booking (order car)
+    createBooking: async function (bookingData) {
+      log("Creating new booking");
+
+      try {
+        const data = await callApi("/bookings", "POST", bookingData);
+        log("Creation successful:", data);
+        return data;
+      } catch (error) {
+        log("Error creating booking:", error);
+        throw error;
+      }
+    },
+
+    // Update booking
+    updateBooking: async function (bookingId, bookingData) {
+      log(`Updating booking with ID: ${bookingId}`);
+
+      try {
+        const data = await callApi(
+          `/bookings/${bookingId}`,
+          "PUT",
+          bookingData
+        );
+        log("Update successful:", data);
+        return data;
+      } catch (error) {
+        log("Error updating booking:", error);
+        throw error;
+      }
+    },
+
+    // Delete booking
+    deleteBooking: async function (bookingId) {
+      log(`Deleting booking with ID: ${bookingId}`);
+
+      try {
+        const data = await callApi(`/bookings/${bookingId}`, "DELETE");
+        log("Delete successful:", data);
+        return data;
+      } catch (error) {
+        log("Error deleting booking:", error);
+        throw error;
+      }
+    },
+
+    // Get bookings for a specific user
+    getUserBookings: async function (userId) {
+      log(`Fetching bookings for user with ID: ${userId}`);
+
+      try {
+        // This endpoint matches your BookingController
+        const data = await callApi(`/bookings/user/${userId}`, "GET");
+        log(`Retrieved ${data.length} bookings for user ${userId}`);
+        return data;
+      } catch (error) {
+        log("Error fetching user bookings:", error);
+        throw error;
+      }
+    },
+
+};
+
+// UI Helpers for formatting
+const uiHelpers = {
+formatDate: function (dateString) {
+const date = new Date(dateString);
+return date.toLocaleDateString("en-US", {
+year: "numeric",
+month: "long",
+day: "numeric",
+});
+},
+
+    formatPrice: function (price) {
+      return price.toLocaleString() + " kr";
+    },
+
+};
+
+// Initialize the API module
+function init() {
+log("API module initialized");
+}
+
+// Return public methods and services
+return {
+init,
+callApi,
+authService,
+userService,
+carService,
+bookingService,
+uiHelpers,
+};
+})();
+
+// Initialize module when DOM is loaded
+document.addEventListener("DOMContentLoaded", function () {
+apiModule.init();
+});
+
+// Add this function at the end of your rental.js file
+function debugCarImage() {
+console.log("Starting car image debug...");
+
+// Get cars from the API
+carService
+.getAllCars()
+.then((cars) => {
+console.log(`Retrieved ${cars.length} cars`);
+
+      if (cars.length === 0) {
+        console.log("No cars found to debug");
+        return;
+      }
+
+      // Examine the first car
+      const car = cars[0];
+      console.log("First car:", car);
+
+      // Check for image data
+      if (!car.image) {
+        console.log("This car has no image data");
+        return;
+      }
+
+      // Check image data type
+      console.log("Image data type:", typeof car.image);
+
+      // If it's an object, examine structure
+      if (typeof car.image === "object") {
+        // Check if it's an array
+        if (Array.isArray(car.image)) {
+          console.log("Image is an array with length:", car.image.length);
+          if (car.image.length > 0) {
+            console.log("First few values:", car.image.slice(0, 10));
+          }
+        } else {
+          // It's a non-array object
+          console.log("Image keys:", Object.keys(car.image));
+          const values = Object.values(car.image);
+          console.log("Image values length:", values.length);
+          if (values.length > 0) {
+            console.log("First few values:", values.slice(0, 10));
+          }
+        }
+      }
+
+      // If it's a string, check format
+      if (typeof car.image === "string") {
+        console.log("Image string length:", car.image.length);
+        console.log("Image string starts with:", car.image.substring(0, 50));
+      }
+
+      console.log("Debug complete");
+    })
+    .catch((error) => {
+      console.error("Error debugging car image:", error);
+    });
+
+}
+
+// Make it available globally
+window.debugCarImage = debugCarImage;
+
+// Export module for use in other scripts
+window.apiModule = apiModule;
+
+js/app.js:
+/\*\*
+
+- Main Application Module for Car Rental Application
+- Handles page loading, routing, and app initialization
+  \*/
+  const app = (function () {
+  // Debug mode
+  const DEBUG = true;
+
+// HTML folder name
+const HTML_FOLDER = "pages";
+
+// Log helper
+function log(message, data) {
+if (DEBUG) {
+console.log(message);
+if (data !== undefined) console.log(data);
+}
+}
+
+// Function to load pages dynamically
+function loadPage(pageName, params = {}) {
+log(`Loading page: ${pageName} with params:`, params);
+
+    // Special case for index.html or empty page name - load home.html
+    if (pageName === "index.html" || pageName === "") {
+      pageName = "home.html";
+    }
+
+    // Update current page in sessionStorage
+    sessionStorage.setItem("currentPage", pageName);
+
+    // Extract the base name without extension
+    let baseName = pageName;
+    if (pageName.endsWith(".html")) {
+      baseName = pageName.substring(0, pageName.length - 5);
+    }
+
+    // Get the content container
+    const contentContainer = document.getElementById("content-container");
+    if (!contentContainer) {
+      log("Content container not found");
+      return Promise.reject(new Error("Content container not found"));
+    }
+
+    // Show loading indicator
+    contentContainer.innerHTML = '<div class="loading-spinner"></div>';
+
+    // Construct the correct path (ensure it's in the correct directory)
+    const pagePath = `${HTML_FOLDER}/${pageName}`;
+
+    log(`Fetching page content from: ${pagePath}`);
+
+    // List available files in the pages directory (for debugging)
+    log(
+      `Available files in ${HTML_FOLDER}/ directory:`,
+      "Check network tab or directory structure manually"
+    );
+
+    // Fetch the page content
+    return fetch(pagePath)
+      .then((response) => {
+        log(
+          `Response for ${pagePath}: ${response.status} ${response.statusText}`
+        );
+        if (!response.ok) {
+          throw new Error(
+            `Failed to load page: ${response.status} ${response.statusText}`
+          );
+        }
+        return response.text();
+      })
+      .then((html) => {
+        log(
+          `Successfully loaded content for ${pageName}, length: ${html.length} chars`
+        );
+
+        // Insert the HTML content
+        contentContainer.innerHTML = html;
+
+        // Update page title
+        document.title = `Wigell Car Rentals - ${
+          baseName.charAt(0).toUpperCase() + baseName.slice(1)
+        }`;
+
+        // Initialize page-specific functionality
+        initCurrentPage(baseName);
+
+        // Update login status display
+        updateLoginStatus();
+
+        return true;
+      })
+      .catch((error) => {
+        log(`Error loading page ${pageName}:`, error);
+
+        contentContainer.innerHTML = `
+          <div class="error-container">
+            <h2>Error Loading Page</h2>
+            <p>${error.message}</p>
+            <p>Could not find ${pagePath}</p>
+            <p>Make sure the file exists in the "${HTML_FOLDER}" directory.</p>
+            <button class="btn" onclick="app.loadPage('home.html')">Go to Home</button>
+          </div>
+        `;
+        return false;
+      });
+
+}
+
+// Function to initialize the app
+function init() {
+log("Initializing app");
+
+    // Setup initial page
+    loadPage("home.html");
+
+    // Verify authentication status
+    verifyAuthStatus();
+
+    // Setup navigation link handling
+    setupNavLinks();
+
+    // Setup window popstate event (for browser back/forward buttons)
+    window.addEventListener("popstate", function (event) {
+      const currentPage = sessionStorage.getItem("currentPage") || "home.html";
+      loadPage(currentPage);
+    });
+
+}
+
+// Setup navigation links
+function setupNavLinks() {
+// This handles any navigation links that aren't in the sidebar
+document.addEventListener("click", function (e) {
+// Look for links with data-page attribute
+if (e.target && e.target.getAttribute("data-page")) {
+e.preventDefault();
+const pageName = e.target.getAttribute("data-page");
+loadPage(pageName);
+}
+});
+}
+
+// Function to initialize page-specific functionality
+function initCurrentPage(pageName) {
+log(`Initializing page-specific functionality for: ${pageName}`);
+
+    // Get auth state
+    const isLoggedIn = window.apiModule.authService.isLoggedIn();
+    const isAdmin = window.apiModule.authService.isAdmin();
+
+    // Initialize based on page
+    switch (pageName) {
+      case "home":
+        // Home page initialization
+        break;
+
+      case "login":
+        // Only setup login form if user is not already logged in
+        if (!isLoggedIn && window.authModule) {
+          window.authModule.setupLoginForm();
+        } else {
+          // Redirect to home if already logged in
+          loadPage("home.html");
+        }
+        break;
+
+      case "register":
+        // Only setup register form if user is not already logged in
+        if (!isLoggedIn && window.authModule) {
+          window.authModule.setupRegistrationForm();
+        } else {
+          // Redirect to home if already logged in
+          loadPage("home.html");
+        }
+        break;
+
+      case "rental":
+        // Initialize car rental page
+        log("Setting up rental page");
+        if (window.rentalModule) {
+          log("Rental module found, calling setupCarList");
+          window.rentalModule.setupCarList();
+        } else {
+          log("Warning: rentalModule not found or missing setupCarList method");
+        }
+        break;
+
+      case "booking":
+        // Initialize booking page - requires login
+        if (!isLoggedIn) {
+          sessionStorage.setItem("redirectAfterLogin", "booking.html");
+          loadPage("login.html");
+        } else if (window.bookingModule) {
+          window.bookingModule.setupBookingPage();
+        }
+        break;
+
+      case "user":
+        // Initialize user page - requires login
+        if (!isLoggedIn) {
+          sessionStorage.setItem("redirectAfterLogin", "user.html");
+          loadPage("login.html");
+        } else if (window.userModule) {
+          window.userModule.setupUserPage();
+        }
+        break;
+
+      case "admin":
+        // Initialize admin page - requires admin login
+        if (!isLoggedIn) {
+          sessionStorage.setItem("redirectAfterLogin", "admin.html");
+          loadPage("login.html");
+        } else if (!isAdmin) {
+          alert("You do not have administrator privileges.");
+          loadPage("home.html");
+        } else if (window.adminModule) {
+          log("Setting up admin page");
+          window.adminModule.setupAdminPage();
+        }
+        break;
+
+      default:
+        log(`No specific initialization for page: ${pageName}`);
+    }
+
+}
+
+// Function to update login status display
+function updateLoginStatus() {
+log(
+`Updating login status - isLoggedIn: ${window.apiModule.authService.isLoggedIn()} isAdmin: ${window.apiModule.authService.isAdmin()}`
+);
+
+    // If auth module is available, update auth UI
+    if (
+      window.authModule &&
+      typeof window.authModule.updateAuthUI === "function"
+    ) {
+      window.authModule.updateAuthUI();
+    }
+
+}
+
+// Function to verify current authentication status
+function verifyAuthStatus() {
+log("Verifying authentication status");
+
+    // Only check if user is supposedly logged in
+    if (window.apiModule && window.apiModule.authService.isLoggedIn()) {
+      window.apiModule.authService
+        .verifyAuth()
+        .then((isValid) => {
+          log(`Auth verification result: ${isValid}`);
+
+          if (!isValid) {
+            // If verification fails, clear auth state
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("username");
+            localStorage.removeItem("isAdmin");
+            localStorage.removeItem("userId");
+
+            // Update UI
+            updateLoginStatus();
+
+            // If on a protected page, redirect to login
+            const currentPage = sessionStorage.getItem("currentPage");
+            if (
+              currentPage &&
+              (currentPage === "admin.html" ||
+                currentPage === "user.html" ||
+                currentPage === "booking.html")
+            ) {
+              sessionStorage.setItem("redirectAfterLogin", currentPage);
+              loadPage("login.html");
+            }
+          }
+        })
+        .catch((error) => {
+          log("Auth verification error:", error);
+          // On error, assume authentication is valid to prevent logout due to network issues
+        });
+    }
+
+}
+
+// Public API
+return {
+init,
+loadPage,
+updateLoginStatus,
+};
+})();
+
+// Initialize app when DOM is loaded
+document.addEventListener("DOMContentLoaded", function () {
+// Make app globally available immediately
+window.app = app;
+
+// Initialize app after API and Auth modules are ready
+if (window.apiModule) {
+app.init();
+} else {
+// Wait for API module to be loaded
+const checkApiModule = setInterval(function () {
+if (window.apiModule) {
+clearInterval(checkApiModule);
+app.init();
+}
+}, 100);
+
+    // Timeout after 5 seconds
+    setTimeout(function () {
+      clearInterval(checkApiModule);
+      console.error("API module failed to load in time");
+
+      // Fallback initialization
+      app.init();
+    }, 5000);
+
+}
+});
+
+// Ensure app is exported for global access
+window.app = app;
+
+js/auth.js:
+/\*\*
+
+- Authentication Module for Car Rental Application
+- Handles user login, registration, and authentication state
+  \*/
+  const authModule = (function () {
+  // Debug flag
+  const DEBUG = true;
+
+// Log helper
+function log(message, data) {
+if (DEBUG) {
+console.log(`[Auth] ${message}`);
+if (data !== undefined) console.log(data);
+}
+}
+
+// Function to set up login form
+function setupLoginForm() {
+log("Setting up login form");
+
+    const loginForm = document.getElementById("login-form");
+
+    if (!loginForm) {
+      log("Login form not found in DOM");
+      return;
+    }
+
+    loginForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      log("Login form submitted");
+
+      // Get the input values
+      const username = document.getElementById("login-username").value;
+      const password = document.getElementById("login-password").value;
+
+      log(`Username: ${username}`);
+      log(`Password: ${"*".repeat(password.length)}`);
+
+      // Clear any previous error messages
+      const errorElement = document.querySelector(".login-error-message");
+      if (errorElement) {
+        errorElement.style.display = "none";
+      }
+
+      // Call login API directly with fetch to match the test approach
+      performLogin(username, password);
+    });
+
+}
+
+// Enhanced login function that matches the successful test
+async function performLogin(username, password) {
+const API_BASE_URL = "http://localhost:8080/api/v1";
+const url = `${API_BASE_URL}/auth/login`;
+
+    log(`Attempting login with username: ${username}`);
+    log(`Using login endpoint: ${url}`);
+
+    try {
+      // Create request body
+      const requestBody = JSON.stringify({
+        username: username,
+        password: password,
+      });
+
+      log("Sending login request...");
+
+      // Make the request
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: requestBody,
+        credentials: "include", // Critical for cookies
+      });
+
+      log(`Login response status: ${response.status} ${response.statusText}`);
+
+      // Check for cookies
+      const cookies = document.cookie;
+      log("Cookies after login: ", cookies);
+
+      // Get response text
+      const responseText = await response.text();
+      log(`Login response text: ${responseText}`);
+
+      // Check if request was successful
+      if (!response.ok) {
+        throw new Error(
+          `Login failed with status ${response.status}: ${response.statusText}`
+        );
+      }
+
+      // Parse response if it's JSON
+      let data = {};
+      if (responseText) {
+        try {
+          data = JSON.parse(responseText);
+          log("Login successful, parsed data:", data);
+        } catch (e) {
+          log("Response is not JSON, using text");
+          data = { message: responseText };
+        }
+      }
+
+      // Store authentication data in localStorage
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("username", username);
+
+      // Store admin flag if provided
+      if (data.isAdmin !== undefined) {
+        localStorage.setItem("isAdmin", data.isAdmin ? "true" : "false");
+      } else {
+        // Default to false if not specified
+        localStorage.setItem("isAdmin", "false");
+      }
+
+      log("Authentication data stored in localStorage");
+
+      // Update the UI
+      updateAuthUI();
+
+      // Redirect after login
+      redirectAfterLogin();
+
+      return data;
+    } catch (error) {
+      log("Login error:", error);
+
+      // Show error message
+      const errorElement = document.querySelector(".login-error-message");
+      if (errorElement) {
+        errorElement.style.display = "block";
+        errorElement.textContent = "Incorrect username or password.";
+      }
+
+      throw error;
+    }
+
+}
+
+// Redirect after login based on user role
+function redirectAfterLogin() {
+// Check if there's a redirect URL in sessionStorage
+const redirectUrl = sessionStorage.getItem("redirectAfterLogin");
+
+    if (redirectUrl) {
+      log(`Redirecting to saved URL: ${redirectUrl}`);
+      sessionStorage.removeItem("redirectAfterLogin");
+      window.app.loadPage(redirectUrl);
+      return;
+    }
+
+    // Otherwise redirect based on role
+    if (isAdmin()) {
+      log("Admin user, redirecting to admin page");
+      window.app.loadPage("admin.html");
+    } else {
+      log("Regular user, redirecting to cars page");
+      window.app.loadPage("rental.html");
+    }
+
+}
+
+// Function to set up registration form
+function setupRegistrationForm() {
+log("Checking for registration form");
+
+    const registrationForm = document.getElementById("register-form");
+
+    if (!registrationForm) {
+      log("Registration form not found in DOM");
+      return;
+    }
+
+    log("Setting up registration form");
+
+    registrationForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      log("Registration form submitted");
+
+      // Get form values
+      const username = document.getElementById("register-username").value;
+      const email = document.getElementById("register-email").value;
+      const password = document.getElementById("register-password").value;
+      const confirmPassword = document.getElementById(
+        "register-confirm-password"
+      ).value;
+
+      // Validation
+      if (password !== confirmPassword) {
+        const errorElement = document.getElementById("register-error");
+        if (errorElement) {
+          errorElement.textContent = "Passwords do not match";
+          errorElement.style.display = "block";
+        }
+        return;
+      }
+
+      // Prepare user data
+      const userData = {
+        username,
+        email,
+        password,
+      };
+
+      log("Registering user:", userData);
+
+      // Call registration API
+      register(userData)
+        .then((userData) => {
+          log("Registration successful:", userData);
+
+          // Show success message
+          document.getElementById("register-form").style.display = "none";
+          document.getElementById("register-success").style.display = "block";
+
+          // Automatically log in after registration
+          return performLogin(username, password);
+        })
+        .then(() => {
+          log("Auto-login after registration successful");
+
+          // Redirect after a short delay
+          setTimeout(() => {
+            window.app.loadPage("home.html");
+          }, 2000);
+        })
+        .catch((error) => {
+          log("Registration error:", error);
+
+          // Show error message
+          const errorElement = document.getElementById("register-error");
+          if (errorElement) {
+            let errorMsg = "Registration failed. Please try again.";
+
+            if (error.data && error.data.message) {
+              errorMsg = error.data.message;
+            } else if (error.message) {
+              errorMsg = error.message;
+            }
+
+            errorElement.textContent = errorMsg;
+            errorElement.style.display = "block";
+          }
+        });
+    });
+
+}
+
+// Registration function
+async function register(userData) {
+const API_BASE_URL = "http://localhost:8080/api/v1";
+const url = `${API_BASE_URL}/users`;
+
+    log(`Registering user: ${userData.username}`);
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+        credentials: "include",
+      });
+
+      log(
+        `Registration response status: ${response.status} ${response.statusText}`
+      );
+
+      // Get response text
+      const responseText = await response.text();
+      log(`Registration response text: ${responseText}`);
+
+      // Check if request was successful
+      if (!response.ok) {
+        throw new Error(
+          `Registration failed with status ${response.status}: ${response.statusText}`
+        );
+      }
+
+      // Parse response if it's JSON
+      let data = {};
+      if (responseText) {
+        try {
+          data = JSON.parse(responseText);
+        } catch (e) {
+          log("Response is not JSON, using text");
+          data = { message: responseText };
+        }
+      }
+
+      return data;
+    } catch (error) {
+      log("Registration error:", error);
+      throw error;
+    }
+
+}
+
+// Function to set up logout button
+function setupLogoutButton() {
+log("Setting up logout button in auth module");
+
+    // Find both the logout container and link
+    const logoutBtn = document.getElementById("logout-btn");
+    const logoutLink = document.querySelector(".logout-link");
+
+    if (logoutBtn) {
+      log("Found logout button container");
+      logoutBtn.onclick = performLogout;
+    }
+
+    if (logoutLink) {
+      log("Found logout link");
+      logoutLink.onclick = performLogout;
+    }
+
+    if (!logoutBtn && !logoutLink) {
+      log("No logout elements found");
+    }
+
+}
+
+// Direct logout function with no async
+function performLogout(e) {
+if (e) {
+e.preventDefault();
+}
+
+    log("Performing logout");
+
+    // Clear all auth data
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("username");
+    localStorage.removeItem("isAdmin");
+    localStorage.removeItem("userId");
+
+    // Clear cookies
+    document.cookie.split(";").forEach(function (c) {
+      document.cookie = c
+        .replace(/^ +/, "")
+        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+
+    log("Authentication data cleared");
+
+    // Force reload the page to ensure a clean state
+    window.location.href = "index.html";
+
+    // Prevent further event handling
+    return false;
+
+}
+
+// Function to update auth-related UI elements
+function updateAuthUI() {
+log("Updating auth UI");
+
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    const username = localStorage.getItem("username") || "Guest";
+
+    log("Current auth state:");
+    log(`- isLoggedIn: ${isLoggedIn}`);
+    log(`- username: ${username}`);
+    log(`- isAdmin: ${isAdmin}`);
+
+    // Update sidebar auth UI if sidebar module is available
+    if (
+      window.sidebarModule &&
+      typeof window.sidebarModule.updateAuthUI === "function"
+    ) {
+      window.sidebarModule.updateAuthUI();
+    } else {
+      // If sidebar module isn't available, update UI elements directly
+
+      // Update sidebar UI elements
+      const loginNavItem = document.getElementById("login-nav-item");
+      const myPagesNavItem = document.getElementById("my-pages-nav-item");
+      const adminNavItem = document.getElementById("admin-nav-item");
+      const userWelcome = document.getElementById("user-welcome");
+      const logoutBtn = document.getElementById("logout-btn");
+
+      // Update visibility
+      if (loginNavItem) {
+        loginNavItem.style.display = isLoggedIn ? "none" : "block";
+      }
+
+      if (myPagesNavItem) {
+        myPagesNavItem.style.display = isLoggedIn ? "block" : "none";
+      }
+
+      if (adminNavItem) {
+        adminNavItem.style.display = isLoggedIn && isAdmin ? "block" : "none";
+      }
+
+      if (userWelcome) {
+        userWelcome.style.display = isLoggedIn ? "block" : "none";
+        userWelcome.textContent = `Welcome, ${username}`;
+      }
+
+      if (logoutBtn) {
+        logoutBtn.style.display = isLoggedIn ? "block" : "none";
+      }
+    }
+
+}
+
+// Helper functions to check auth state
+function isLoggedIn() {
+return localStorage.getItem("isLoggedIn") === "true";
+}
+
+function isAdmin() {
+return localStorage.getItem("isAdmin") === "true";
+}
+
+function getUsername() {
+return localStorage.getItem("username") || "Guest";
+}
+
+// Initialize the auth module
+function init() {
+log("Auth module initialized");
+
+    // Update auth UI based on current state
+    updateAuthUI();
+
+}
+
+// Return public methods
+return {
+init,
+setupLoginForm,
+setupRegistrationForm,
+setupLogoutButton,
+updateAuthUI,
+isLoggedIn,
+isAdmin,
+getUsername,
+};
+})();
+
+// Initialize module when DOM is loaded
+document.addEventListener("DOMContentLoaded", function () {
+authModule.init();
+});
+
+// Export module for use in other scripts
+window.authModule = authModule;
+
+js/booking.js:
+/\*\*
+
+- Booking Module for Car Rental Application
+- Handles booking creation and management
+  \*/
+  const bookingModule = (function () {
+  // Store the current car data
+  let currentCar = null;
+
+// Function to setup booking page
+function setupBookingPage(carId) {
+console.log("Setting up booking page for car:", carId);
+
+    if (!carId) {
+      console.error("No car ID provided");
+      showError("No car selected. Please choose a car first.");
+      return;
+    }
+
+    // Load car data
+    loadCarData(carId);
+
+    // Setup booking form
+    setupBookingForm();
+
+}
+
+// Function to load car data
+async function loadCarData(carId) {
+try {
+// Show loading state
+const carDetails = document.getElementById("booking-car-details");
+if (carDetails) {
+carDetails.innerHTML =
+'<div class="loading-spinner">Loading car details...</div>';
+}
+
+      // Fetch car data from API
+      currentCar = await apiModule.carService.getCarById(carId);
+
+      // Display car details
+      displayCarDetails(currentCar);
+    } catch (error) {
+      console.error("Error loading car data:", error);
+      showError("Failed to load car details. Please try again.");
+    }
+
+}
+
+// Function to display car details
+function displayCarDetails(car) {
+const carDetails = document.getElementById("booking-car-details");
+
+    if (!carDetails) {
+      console.error("Car details container not found");
+      return;
+    }
+
+    // Format price
+    const formattedPrice = apiModule.uiHelpers.formatPrice(car.pricePerDay);
+
+    carDetails.innerHTML = `
+      <div class="booking-car-card">
+        <div class="booking-car-image">
+          <img src="${car.imageUrl || "images/default-car.jpg"}" alt="${
+      car.make
+    } ${car.model}">
+        </div>
+        <div class="booking-car-info">
+          <h2>${car.make} ${car.model}</h2>
+          <p class="booking-car-year">${car.year}</p>
+          <div class="booking-car-specs">
+            <span class="booking-car-category">${car.category}</span>
+            <span class="booking-car-seats">${car.seats} seats</span>
+            <span class="booking-car-transmission">${car.transmission}</span>
+          </div>
+          <p class="booking-car-description">${car.description}</p>
+          <div class="booking-car-price">
+            <span>Price per day:</span>
+            <span class="price">${formattedPrice}</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Update the price field in the booking form
+    const pricePerDayElement = document.getElementById("booking-price-per-day");
+    if (pricePerDayElement) {
+      pricePerDayElement.textContent = formattedPrice;
+    }
+
+    // Calculate initial total price
+    calculateTotalPrice();
+
+}
+
+// Function to setup the booking form
+function setupBookingForm() {
+const bookingForm = document.getElementById("booking-form");
+const startDateInput = document.getElementById("booking-start-date");
+const endDateInput = document.getElementById("booking-end-date");
+
+    if (!bookingForm || !startDateInput || !endDateInput) {
+      console.error("Booking form elements not found");
+      return;
+    }
+
+    // Set min date to today
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const todayStr = today.toISOString().split("T")[0];
+    const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
+    startDateInput.min = todayStr;
+    startDateInput.value = todayStr;
+
+    endDateInput.min = tomorrowStr;
+    endDateInput.value = tomorrowStr;
+
+    // Add event listeners for date changes
+    startDateInput.addEventListener("change", function () {
+      // Ensure end date is after start date
+      const startDate = new Date(this.value);
+      const minEndDate = new Date(startDate);
+      minEndDate.setDate(minEndDate.getDate() + 1);
+
+      endDateInput.min = minEndDate.toISOString().split("T")[0];
+
+      // If current end date is before new min end date, update it
+      if (new Date(endDateInput.value) <= startDate) {
+        endDateInput.value = minEndDate.toISOString().split("T")[0];
+      }
+
+      // Recalculate total price
+      calculateTotalPrice();
+
+      // Check availability
+      checkAvailability();
+    });
+
+    endDateInput.addEventListener("change", function () {
+      // Recalculate total price
+      calculateTotalPrice();
+
+      // Check availability
+      checkAvailability();
+    });
+
+    // Setup form submission
+    bookingForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      createBooking();
+    });
+
+    // Initial calculation and availability check
+    calculateTotalPrice();
+    checkAvailability();
+
+}
+
+// Function to calculate total price
+function calculateTotalPrice() {
+if (!currentCar) return;
+
+    const startDateInput = document.getElementById("booking-start-date");
+    const endDateInput = document.getElementById("booking-end-date");
+    const totalPriceElement = document.getElementById("booking-total-price");
+
+    if (!startDateInput || !endDateInput || !totalPriceElement) {
+      return;
+    }
+
+    // Calculate days
+    const startDate = new Date(startDateInput.value);
+    const endDate = new Date(endDateInput.value);
+    const timeDiff = endDate.getTime() - startDate.getTime();
+    const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+    // Update days display
+    const daysElement = document.getElementById("booking-days");
+    if (daysElement) {
+      daysElement.textContent = days;
+    }
+
+    // Calculate total price
+    const totalPrice = days * currentCar.pricePerDay;
+
+    // Update total price display
+    totalPriceElement.textContent = apiModule.uiHelpers.formatPrice(totalPrice);
+
+}
+
+// Function to check car availability
+async function checkAvailability() {
+if (!currentCar) return;
+
+    const startDateInput = document.getElementById("booking-start-date");
+    const endDateInput = document.getElementById("booking-end-date");
+    const availabilityMessage = document.getElementById(
+      "booking-availability-message"
+    );
+    const submitButton = document.getElementById("booking-submit");
+
+    if (
+      !startDateInput ||
+      !endDateInput ||
+      !availabilityMessage ||
+      !submitButton
+    ) {
+      return;
+    }
+
+    try {
+      // Show checking message
+      availabilityMessage.textContent = "Checking availability...";
+      availabilityMessage.className = "availability-checking";
+
+      // Disable submit button while checking
+      submitButton.disabled = true;
+
+      // Call API to check availability
+      const result = await apiModule.bookingService.checkCarAvailability(
+        currentCar.id,
+        startDateInput.value,
+        endDateInput.value
+      );
+
+      // Update UI based on availability
+      if (result.available) {
+        availabilityMessage.textContent =
+          "Car is available for the selected dates!";
+        availabilityMessage.className = "availability-available";
+        submitButton.disabled = false;
+      } else {
+        availabilityMessage.textContent =
+          "Sorry, this car is not available for the selected dates.";
+        availabilityMessage.className = "availability-unavailable";
+        submitButton.disabled = true;
+      }
+    } catch (error) {
+      console.error("Error checking availability:", error);
+      availabilityMessage.textContent =
+        "Could not check availability. Please try again.";
+      availabilityMessage.className = "availability-error";
+      submitButton.disabled = true;
+    }
+
+}
+
+// Function to create a booking
+async function createBooking() {
+if (!currentCar) {
+showError("No car selected. Please choose a car first.");
+return;
+}
+
+    const startDateInput = document.getElementById("booking-start-date");
+    const endDateInput = document.getElementById("booking-end-date");
+
+    if (!startDateInput || !endDateInput) {
+      showError(
+        "Booking form is incomplete. Please refresh the page and try again."
+      );
+      return;
+    }
+
+    try {
+      // Disable submit button and show loading
+      const submitButton = document.getElementById("booking-submit");
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+      }
+
+      // Prepare booking data
+      const bookingData = {
+        carId: currentCar.id,
+        startDate: startDateInput.value,
+        endDate: endDateInput.value,
+      };
+
+      // Call API to create booking
+      const result = await apiModule.bookingService.createBooking(bookingData);
+
+      // Show success message
+      showSuccess(
+        "Booking created successfully! Booking reference: " + result.id
+      );
+
+      // Clear car selection from session storage
+      sessionStorage.removeItem("carId");
+
+      // Redirect to bookings page after a short delay
+      setTimeout(() => {
+        window.loadPage("bookings.html");
+      }, 2000);
+    } catch (error) {
+      console.error("Error creating booking:", error);
+
+      // Re-enable submit button
+      const submitButton = document.getElementById("booking-submit");
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = "Complete Booking";
+      }
+
+      showError("Failed to create booking. Please try again. " + error.message);
+    }
+
+}
+
+// Function to show error message
+function showError(message) {
+const errorContainer = document.getElementById("booking-error");
+const successContainer = document.getElementById("booking-success");
+
+    if (errorContainer) {
+      errorContainer.textContent = message;
+      errorContainer.style.display = "block";
+    } else {
+      alert("Error: " + message);
+    }
+
+    if (successContainer) {
+      successContainer.style.display = "none";
+    }
+
+}
+
+// Function to show success message
+function showSuccess(message) {
+const successContainer = document.getElementById("booking-success");
+const errorContainer = document.getElementById("booking-error");
+
+    if (successContainer) {
+      successContainer.textContent = message;
+      successContainer.style.display = "block";
+    } else {
+      alert("Success: " + message);
+    }
+
+    if (errorContainer) {
+      errorContainer.style.display = "none";
+    }
+
+}
+
+// Return public methods
+return {
+setupBookingPage,
+loadCarData,
+calculateTotalPrice,
+checkAvailability,
+createBooking,
+};
+})();
+
+// Export the module for use in other scripts
+window.bookingModule = bookingModule;
+
+js/rental.js:
+/\*\*
+
+- Rental Module for Car Rental Application
+- Handles car listing, rental history and rental functionality
+  \*/
+  const rentalModule = (function () {
+  // Debug flag
+  const DEBUG = true;
+
+// Store active rentals
+let activeRentals = [];
+
+// Log helper
+function log(message, data) {
+if (DEBUG) {
+console.log(`[Rental] ${message}`);
+if (data !== undefined) console.log(data);
+}
+}
+
+async function fetchCarDetails() {
+try {
+const response = await fetch(
+`http://localhost:8080/api/v1/cars/${carId}`
+);
+if (!response.ok) throw new Error("Car not found");
+const car = await response.json();
+displayCarDetails(car);
+} catch (err) {
+console.error("Error fetching car:", err);
+}
+}
+
+function displayCarDetails(car) {
+const image = document.querySelector("#car-image");
+const name = document.querySelector("#car-name");
+const model = document.querySelector("#car-model");
+
+    image.src = getImageUrl(car.image);
+    name.textContent = car.name;
+    model.textContent = car.model;
+    // ... add other fields as needed
+
+}
+
+// Setup car list
+function setupCarList() {
+log("Setting up car list");
+
+    // Load cars from API
+    loadCars();
+
+    // Setup search and filter functionality
+    setupSearch();
+    setupFilters();
+    setupRentButtons();
+
+}
+
+// Load cars from API
+async function loadCars() {
+log("Loading cars from API");
+
+    try {
+      // Get car list container
+      const carGrid = document.querySelector(".car-grid");
+      if (!carGrid) {
+        log("Car grid element not found");
+        return;
+      }
+
+      // Clear existing content
+      carGrid.innerHTML = '<div class="loading-spinner"></div>';
+
+      // Get cars from API
+      const cars = await window.apiModule.carService.getAllCars();
+      log(`Retrieved ${cars.length} cars`, cars);
+
+      // Clear loading spinner
+      carGrid.innerHTML = "";
+
+      // Check if we got any cars
+      if (!cars || cars.length === 0) {
+        carGrid.innerHTML = `
+          <div class="no-cars-message">
+            <p>No cars are currently available.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Generate car cards
+      cars.forEach((car) => {
+        const carCard = createCarCard(car);
+        carGrid.appendChild(carCard);
+      });
+    } catch (error) {
+      log("Error loading cars:", error);
+
+      // Show error message
+      const carGrid = document.querySelector(".car-grid");
+      if (carGrid) {
+        carGrid.innerHTML = `
+          <div class="error-message">
+            <p>Failed to load cars. Please try again later.</p>
+            <button class="btn retry-button">Retry</button>
+          </div>
+        `;
+
+        // Add retry button functionality
+        const retryButton = carGrid.querySelector(".retry-button");
+        if (retryButton) {
+          retryButton.addEventListener("click", loadCars);
+        }
+      }
+    }
+
+}
+
+// Create a car card element
+// Create a car card element
+function createCarCard(car) {
+log("Creating car card for:", car);
+
+    // Create card element
+    const card = document.createElement("div");
+    card.className = "car-card";
+    card.dataset.carId = car.id;
+    card.dataset.carType = car.type?.toLowerCase() || "";
+
+    // Handle image properly - NO default paths!
+    let imageElement = "";
+
+    try {
+      if (car.image) {
+        log(`Car ${car.id}: Processing image data`);
+
+        // Handle byte array from database (most likely your format)
+        if (typeof car.image === "object") {
+          try {
+            // Convert from various array formats to a Uint8Array
+            let byteArray;
+
+            if (Array.isArray(car.image)) {
+              byteArray = new Uint8Array(car.image);
+            } else {
+              // Handle JSON object format
+              byteArray = new Uint8Array(Object.values(car.image));
+            }
+
+            // Convert byte array to base64
+            let binary = "";
+            for (let i = 0; i < byteArray.byteLength; i++) {
+              binary += String.fromCharCode(byteArray[i]);
+            }
+
+            const base64Image = btoa(binary);
+            imageElement = `<img src="data:image/jpeg;base64,${base64Image}"
+                              alt="${car.name || ""} ${car.model || ""}"
+                              class="car-image">`;
+          } catch (error) {
+            log(`Error converting image data: ${error.message}`);
+            // If conversion fails, use a placeholder div instead of an image path
+            imageElement = `<div class="no-image-placeholder">No image available</div>`;
+          }
+        }
+        // Handle string image data (less likely but possible)
+        else if (typeof car.image === "string") {
+          imageElement = `<img src="${car.image}"
+                            alt="${car.name || ""} ${car.model || ""}"
+                            class="car-image">`;
+        }
+      } else {
+        // No image data at all
+        imageElement = `<div class="no-image-placeholder">No image available</div>`;
+      }
+    } catch (error) {
+      log(`Error processing image: ${error.message}`);
+      // If any error occurs, use a placeholder div
+      imageElement = `<div class="no-image-placeholder">No image available</div>`;
+    }
+
+    // Populate card content
+    card.innerHTML = `
+    <div class="car-image-container">
+      ${imageElement}
+    </div>
+    <div class="car-details">
+      <h2 class="car-name">${car.name || "Unknown"}</h2>
+      <h3 class="car-model">${car.model || ""}</h3>
+      <p class="car-type">${car.type || "Other"}</p>
+      <ul class="car-features">
+        <li class="car-feature1">${car.feature1 || "Feature not available"}</li>
+        <li class="car-feature2">${car.feature2 || "Feature not available"}</li>
+        <li class="car-feature3">${car.feature3 || "Feature not available"}</li>
+      </ul>
+      <div class="car-pricing">
+        <p class="car-price">${car.price}:- per day</p>
+        <button class="btn rent-button" data-car-id="${car.id}">
+          ${car.booked ? "Currently Unavailable" : "Rent Now"}
+        </button>
+      </div>
+    </div>
+
+`;
+
+    // Disable button if car is booked
+    if (car.booked) {
+      const rentButton = card.querySelector(".rent-button");
+      if (rentButton) {
+        rentButton.disabled = true;
+        rentButton.classList.add("disabled");
+      }
+    }
+
+    return card;
+
+}
+// Setup search functionality
+function setupSearch() {
+log("Setting up search functionality");
+
+    const searchInput = document.getElementById("car-search");
+    const searchButton = document.querySelector(".search-button");
+
+    if (!searchInput || !searchButton) {
+      log("Search elements not found");
+      return;
+    }
+
+    // Search function
+    const performSearch = () => {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      log(`Performing search for: "${searchTerm}"`);
+
+      const carCards = document.querySelectorAll(".car-card");
+
+      carCards.forEach((card) => {
+        const carName =
+          card.querySelector(".car-name")?.textContent?.toLowerCase() || "";
+        const carModel =
+          card.querySelector(".car-model")?.textContent?.toLowerCase() || "";
+        const carType =
+          card.querySelector(".car-type")?.textContent?.toLowerCase() || "";
+
+        // Check if car matches search term
+        const matchesSearch =
+          carName.includes(searchTerm) ||
+          carModel.includes(searchTerm) ||
+          carType.includes(searchTerm);
+
+        // Show/hide based on search
+        card.style.display = matchesSearch ? "flex" : "none";
+      });
+
+      // Check if no results
+      checkNoResults();
+    };
+
+    // Add event listeners
+    searchButton.addEventListener("click", performSearch);
+
+    // Add keyup event listener for Enter key
+    searchInput.addEventListener("keyup", function (event) {
+      if (event.key === "Enter") {
+        performSearch();
+      }
+    });
+
+}
+
+// Setup filter functionality
+function setupFilters() {
+log("Setting up filter functionality");
+
+    const typeFilter = document.getElementById("car-type-filter");
+    const sortBy = document.getElementById("sort-by");
+
+    if (!typeFilter || !sortBy) {
+      log("Filter elements not found");
+      return;
+    }
+
+    // Filter function
+    const applyFilters = () => {
+      const selectedType = typeFilter.value.toLowerCase();
+      const sortOption = sortBy.value;
+
+      log(`Applying filters: type=${selectedType}, sort=${sortOption}`);
+
+      const carCards = document.querySelectorAll(".car-card");
+      const carGrid = document.querySelector(".car-grid");
+
+      // First apply type filter
+      carCards.forEach((card) => {
+        const cardType = card.dataset.carType;
+
+        // Only filter by type if a specific type is selected
+        if (selectedType && cardType !== selectedType) {
+          card.style.display = "none";
+        } else {
+          // Make sure search filter is not hiding this card
+          const searchInput = document.getElementById("car-search");
+          const searchTerm = searchInput?.value.toLowerCase().trim() || "";
+
+          if (searchTerm) {
+            const carName =
+              card.querySelector(".car-name")?.textContent?.toLowerCase() || "";
+            const carModel =
+              card.querySelector(".car-model")?.textContent?.toLowerCase() ||
+              "";
+            const carType =
+              card.querySelector(".car-type")?.textContent?.toLowerCase() || "";
+
+            const matchesSearch =
+              carName.includes(searchTerm) ||
+              carModel.includes(searchTerm) ||
+              carType.includes(searchTerm);
+
+            card.style.display = matchesSearch ? "flex" : "none";
+          } else {
+            card.style.display = "flex";
+          }
+        }
+      });
+
+      // Then sort cards
+      const visibleCards = Array.from(carCards).filter(
+        (card) => card.style.display !== "none"
+      );
+
+      visibleCards.sort((a, b) => {
+        const priceA = parseInt(a.querySelector(".car-price").textContent);
+        const priceB = parseInt(b.querySelector(".car-price").textContent);
+
+        if (sortOption === "price-asc") {
+          return priceA - priceB;
+        } else {
+          return priceB - priceA;
+        }
+      });
+
+      // Reappend cards in sorted order
+      visibleCards.forEach((card) => {
+        carGrid.appendChild(card);
+      });
+
+      // Check if no results
+      checkNoResults();
+    };
+
+    // Add event listeners
+    typeFilter.addEventListener("change", applyFilters);
+    sortBy.addEventListener("change", applyFilters);
+
+}
+
+// Check if no results are shown and display message
+function checkNoResults() {
+const carGrid = document.querySelector(".car-grid");
+const visibleCards = document.querySelectorAll(
+".car-card[style='display: flex']"
+);
+
+    // Remove existing no results message
+    const existingMessage = carGrid.querySelector(".no-results-message");
+    if (existingMessage) {
+      existingMessage.remove();
+    }
+
+    // If no visible cards, show message
+    if (visibleCards.length === 0) {
+      const noResultsMessage = document.createElement("div");
+      noResultsMessage.className = "no-results-message";
+      noResultsMessage.innerHTML = `
+        <p>No cars match your search/filter criteria.</p>
+        <button class="btn clear-filters-btn">Clear Filters</button>
+      `;
+      carGrid.appendChild(noResultsMessage);
+
+      // Add clear filters button functionality
+      const clearFiltersBtn =
+        noResultsMessage.querySelector(".clear-filters-btn");
+      clearFiltersBtn.addEventListener("click", () => {
+        // Reset search input
+        const searchInput = document.getElementById("car-search");
+        if (searchInput) searchInput.value = "";
+
+        // Reset filters
+        const typeFilter = document.getElementById("car-type-filter");
+        if (typeFilter) typeFilter.value = "";
+
+        // Reset sort
+        const sortBy = document.getElementById("sort-by");
+        if (sortBy) sortBy.value = "price-asc";
+
+        // Show all cars
+        const carCards = document.querySelectorAll(".car-card");
+        carCards.forEach((card) => {
+          card.style.display = "flex";
+        });
+
+        // Remove no results message
+        noResultsMessage.remove();
+      });
+    }
+
+}
+
+// Setup rent buttons
+function setupRentButtons() {
+log("Setting up rent buttons");
+
+    // Add click event to all rent buttons (including ones added dynamically)
+    document.addEventListener("click", function (e) {
+      if (e.target && e.target.classList.contains("rent-button")) {
+        handleRentButtonClick(e.target);
+      }
+    });
+
+}
+
+// Handle rent button click
+function handleRentButtonClick(button) {
+const carId = button.getAttribute("data-car-id");
+log(`Rent button clicked for car ID: ${carId}`);
+
+    // Check if user is logged in
+    if (!window.apiModule.authService.isLoggedIn()) {
+      log("User not logged in, showing login message");
+
+      // Check if message already exists
+      const parentDiv = button.closest(".car-pricing");
+      let loginMessage = parentDiv.querySelector(".login-required-message");
+
+      // Only create message if it doesn't exist yet
+      if (!loginMessage) {
+        // Create message container
+        loginMessage = document.createElement("div");
+        loginMessage.className = "login-required-message";
+        loginMessage.style.display = "block";
+        loginMessage.style.marginTop = "10px";
+        loginMessage.style.fontSize = "14px";
+
+        // Add error message text
+        const errorText = document.createElement("span");
+        errorText.textContent = "You need to be logged in to make a booking. ";
+        errorText.style.color = "red";
+
+        // Add login link
+        const loginLink = document.createElement("a");
+        loginLink.textContent = "Log in here";
+        loginLink.href = "#";
+        loginLink.style.color = "blue";
+        loginLink.style.textDecoration = "underline";
+        loginLink.addEventListener("click", function (e) {
+          e.preventDefault();
+          window.app.loadPage("login.html");
+        });
+
+        // Add elements to message container
+        loginMessage.appendChild(errorText);
+        loginMessage.appendChild(loginLink);
+
+        // Add message after the button
+        parentDiv.appendChild(loginMessage);
+
+        // Animate the message appearance
+        loginMessage.style.opacity = "0";
+        setTimeout(() => {
+          loginMessage.style.transition = "opacity 0.3s ease";
+          loginMessage.style.opacity = "1";
+        }, 10);
+      }
+
+      return;
+    }
+
+    // User is logged in, proceed to booking page
+    log("User is logged in, redirecting to booking page with car ID:", carId);
+
+    // Store selected car ID in sessionStorage
+    sessionStorage.setItem("selectedCarId", carId);
+
+    // Navigate to booking page
+    window.app.loadPage("booking.html");
+
+}
+
+// Helper function to format date
+function formatDate(dateString) {
+const date = new Date(dateString);
+return date.toLocaleDateString("en-US", {
+year: "numeric",
+month: "long",
+day: "numeric",
+});
+}
+
+// Helper function to format price
+function formatPrice(price) {
+return price.toLocaleString() + " kr";
+}
+
+// Function to setup rental history page
+function setupRentalHistoryPage() {
+log("Setting up rental history page");
+
+    // Check if user is logged in
+    if (!apiModule.authService.isLoggedIn()) {
+      showError("Please log in to view your rental history.");
+      return;
+    }
+
+    // Load user's rental history
+    loadRentalHistory();
+
+}
+
+// Function to load user's rental history
+async function loadRentalHistory() {
+try {
+// Show loading state
+const rentalsList = document.getElementById("rentals-list");
+if (rentalsList) {
+rentalsList.innerHTML =
+'<div class="loading-spinner">Loading your rental history...</div>';
+}
+
+      // Get current user
+      const currentUser = await apiModule.userService.getCurrentUser();
+
+      if (!currentUser || !currentUser.id) {
+        throw new Error("Could not retrieve current user information");
+      }
+
+      // Fetch user's bookings (rentals)
+      const bookings = await apiModule.bookingService.getUserBookings(
+        currentUser.id
+      );
+
+      // Store active rentals
+      activeRentals = bookings.filter((booking) => {
+        const now = new Date();
+        const startDate = new Date(booking.startDate);
+        const endDate = new Date(booking.endDate);
+        return startDate <= now && endDate >= now;
+      });
+
+      // Fetch car details for each booking
+      const bookingsWithCars = await Promise.all(
+        bookings.map(async (booking) => {
+          try {
+            const car = await apiModule.carService.getCarById(booking.carId);
+            return { ...booking, car };
+          } catch (error) {
+            log(`Error fetching car data for booking ${booking.id}:`, error);
+            return { ...booking, car: null };
+          }
+        })
+      );
+
+      // Display rental history
+      displayRentalHistory(bookingsWithCars);
+    } catch (error) {
+      log("Error loading rental history:", error);
+      showError("Failed to load your rental history. " + error.message);
+    }
+
+}
+
+// Function to display rental history
+function displayRentalHistory(bookings) {
+const rentalsList = document.getElementById("rentals-list");
+
+    if (!rentalsList) {
+      log("Rentals list container not found");
+      return;
+    }
+
+    // Clear previous content
+    rentalsList.innerHTML = "";
+
+    if (bookings.length === 0) {
+      rentalsList.innerHTML = `
+        <div class="no-results">
+          <h3>No rentals found</h3>
+          <p>You haven't rented any cars yet. <a href="#" class="browse-cars-link">Browse our cars</a> to make your first booking!</p>
+        </div>
+      `;
+
+      // Add event listener to browse cars link
+      const browseLink = rentalsList.querySelector(".browse-cars-link");
+      if (browseLink) {
+        browseLink.addEventListener("click", function (e) {
+          e.preventDefault();
+          window.app.loadPage("rental.html");
+        });
+      }
+      return;
+    }
+
+    // Sort bookings by date (newest first)
+    bookings.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+
+    // Create rental cards for each booking
+    bookings.forEach((booking) => {
+      const rentalCard = createRentalCard(booking);
+      rentalsList.appendChild(rentalCard);
+    });
+
+}
+
+// Function to show error message
+function showError(message) {
+const errorContainer = document.getElementById("rental-error");
+
+    if (errorContainer) {
+      errorContainer.textContent = message;
+      errorContainer.style.display = "block";
+    } else {
+      alert("Error: " + message);
+    }
+
+}
+
+// Return public methods
+return {
+setupCarList,
+setupRentalHistoryPage,
+loadRentalHistory,
+getActiveRentals: function () {
+return activeRentals;
+},
+};
+})();
+
+// Export the module for use in other scripts
+window.rentalModule = rentalModule;
+
+js/sidebar.js:
+/\*\*
+
+- Sidebar Module for Car Rental Application
+- Handles sidebar functionality and interactions
+  \*/
+  const sidebarModule = (function () {
+  // Debug mode
+  const DEBUG = true;
+
+// Log helper
+function log(message, data) {
+if (DEBUG) {
+console.log(`[Sidebar] ${message}`);
+if (data !== undefined) console.log(data);
+}
+}
+
+// Function to initialize sidebar
+function init() {
+log("Initializing sidebar module");
+
+    // Setup sidebar toggle
+    setupSidebarToggle();
+
+    // Setup sidebar links
+    setupSidebarLinks();
+
+    // Setup logout button
+    setupLogoutButton();
+
+    // Update sidebar state based on screen size
+    updateSidebarState();
+
+}
+
+// Function to setup sidebar toggle button
+function setupSidebarToggle() {
+const sidebarToggle = document.querySelector(".menu-toggle.sidebar-toggle");
+const sidebar = document.getElementById("sidebar");
+const sidebarOverlay = document.querySelector(".sidebar-overlay");
+
+    if (!sidebarToggle || !sidebar) {
+      log("Sidebar elements not found");
+      return;
+    }
+
+    log("Setting up sidebar toggle");
+
+    sidebarToggle.addEventListener("click", function () {
+      log("Sidebar toggle clicked");
+      sidebar.classList.toggle("collapsed");
+
+      // Toggle overlay
+      if (sidebarOverlay) {
+        sidebarOverlay.classList.toggle("active");
+      }
+
+      // Save preference
+      localStorage.setItem(
+        "sidebar-collapsed",
+        sidebar.classList.contains("collapsed")
+      );
+    });
+
+    // Add click event for overlay to close sidebar
+    if (sidebarOverlay) {
+      sidebarOverlay.addEventListener("click", function () {
+        log("Overlay clicked, collapsing sidebar");
+        sidebar.classList.add("collapsed");
+        sidebarOverlay.classList.remove("active");
+      });
+    }
+
+}
+
+// Function to setup sidebar links
+// Update this function in your sidebar.js file
+function setupSidebarLinks() {
+const sidebarLinks = document.querySelectorAll(".nav-link");
+
+    log(`Found ${sidebarLinks.length} sidebar links`);
+
+    sidebarLinks.forEach((link) => {
+      link.addEventListener("click", function (e) {
+        // Only handle links with data-page attribute
+        const pageName = this.getAttribute("data-page");
+        if (pageName) {
+          e.preventDefault();
+          log(`Sidebar link clicked: ${pageName}`);
+
+          // Update active state
+          document.querySelectorAll(".nav-link").forEach((l) => {
+            l.classList.remove("active");
+          });
+          this.classList.add("active");
+
+          // Log the page we're trying to load
+          log(`Attempting to load page: ${pageName}`);
+
+          // Use app's loadPage function
+          if (window.app && typeof window.app.loadPage === "function") {
+            log(`Using app.loadPage to load: ${pageName}`);
+            window.app.loadPage(pageName);
+          } else {
+            log(
+              "WARNING: app.loadPage not available! Falling back to direct navigation"
+            );
+            window.location.href = pageName;
+          }
+
+          // Close sidebar on mobile
+          if (window.innerWidth < 768) {
+            const sidebar = document.getElementById("sidebar");
+            const sidebarOverlay = document.querySelector(".sidebar-overlay");
+
+            if (sidebar) {
+              sidebar.classList.add("collapsed");
+            }
+
+            if (sidebarOverlay) {
+              sidebarOverlay.classList.remove("active");
+            }
+          }
+        } else {
+          log("Link clicked but no data-page attribute found");
+        }
+      });
+    });
+
+}
+
+// Function to setup logout button in sidebar.js
+function setupLogoutButton() {
+log("Setting up logout button in sidebar");
+
+    // First try to find the actual logout link
+    const logoutLink = document.querySelector(".logout-link");
+
+    if (logoutLink) {
+      log("Found logout link - adding click handler");
+
+      logoutLink.addEventListener("click", function (e) {
+        e.preventDefault();
+        log("Logout link clicked");
+        handleLogout();
+      });
+    } else {
+      log("No logout link found with .logout-link selector");
+    }
+
+    // Also try to find the logout button container
+    const logoutBtn = document.getElementById("logout-btn");
+
+    if (logoutBtn) {
+      log("Found logout button container - adding click handler");
+
+      logoutBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        log("Logout button container clicked");
+        handleLogout();
+      });
+    } else {
+      log("No logout button found with #logout-btn selector");
+    }
+
+}
+
+// Separate function to handle the logout logic
+function handleLogout() {
+log("Handling logout");
+
+    // Clear localStorage
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("username");
+    localStorage.removeItem("isAdmin");
+    localStorage.removeItem("userId");
+
+    // Clear cookies
+    document.cookie.split(";").forEach(function (c) {
+      document.cookie = c
+        .replace(/^ +/, "")
+        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+
+    log("Authentication data cleared");
+
+    // Update UI
+    updateSidebarState();
+
+    // Force reload to homepage
+    window.location.href = "index.html";
+
+}
+// Function to update sidebar state based on screen size
+function updateSidebarState() {
+const sidebar = document.getElementById("sidebar");
+const sidebarOverlay = document.querySelector(".sidebar-overlay");
+
+    if (!sidebar) {
+      log("Sidebar element not found");
+      return;
+    }
+
+    // Get saved preference
+    const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+
+    // Apply preference or set default based on screen size
+    if (window.innerWidth < 768) {
+      sidebar.classList.add("collapsed");
+      if (sidebarOverlay) sidebarOverlay.classList.remove("active");
+    } else {
+      if (isCollapsed) {
+        sidebar.classList.add("collapsed");
+      } else {
+        sidebar.classList.remove("collapsed");
+      }
+    }
+
+}
+
+// Function to update auth-related UI elements (used by auth.js)
+function updateAuthUI() {
+log("Updating auth UI");
+
+    if (!window.apiModule || !window.apiModule.authService) {
+      log("API module not available, cannot update auth UI");
+      return;
+    }
+
+    const isLoggedIn = window.apiModule.authService.isLoggedIn();
+    const isAdmin = window.apiModule.authService.isAdmin();
+    const username = window.apiModule.authService.getUsername();
+
+    log(
+      `Auth state: loggedIn=${isLoggedIn}, admin=${isAdmin}, username=${username}`
+    );
+
+    // Update sidebar UI elements
+    const loginNavItem = document.getElementById("login-nav-item");
+    const myPagesNavItem = document.getElementById("my-pages-nav-item");
+    const adminNavItem = document.getElementById("admin-nav-item");
+    const userWelcome = document.getElementById("user-welcome");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    // Update visibility
+    if (loginNavItem) {
+      loginNavItem.style.display = isLoggedIn ? "none" : "block";
+    }
+
+    if (myPagesNavItem) {
+      myPagesNavItem.style.display = isLoggedIn ? "block" : "none";
+    }
+
+    if (adminNavItem) {
+      adminNavItem.style.display = isLoggedIn && isAdmin ? "block" : "none";
+    }
+
+    if (userWelcome) {
+      userWelcome.style.display = isLoggedIn ? "block" : "none";
+      userWelcome.textContent = `Welcome, ${username}`;
+    }
+
+    if (logoutBtn) {
+      logoutBtn.style.display = isLoggedIn ? "block" : "none";
+    }
+
+}
+
+// Listen for window resize events
+window.addEventListener("resize", function () {
+updateSidebarState();
+});
+
+// Return public methods
+return {
+init,
+updateSidebarState,
+updateAuthUI,
+};
+})();
+
+// Initialize module when DOM is loaded
+document.addEventListener("DOMContentLoaded", function () {
+sidebarModule.init();
+});
+
+// Export module for use in other scripts
+window.sidebarModule = sidebarModule;
+
+js/user.js:
+/\*\*
+
+- User Module for Car Rental Application
+- Handles user profile and settings
+  \*/
+  const userModule = (function () {
+  // Function to setup user profile page
+  function setupProfilePage() {
+  console.log("Setting up user profile page");
+
+      // Check if user is logged in
+      if (!apiModule.authService.isLoggedIn()) {
+        showProfileError("Please log in to view your profile.");
+        return;
+      }
+
+      // Load user profile data
+      loadProfileData();
+
+      // Setup profile form submission
+      setupProfileForm();
+
+      // Setup password change form
+      setupPasswordForm();
+
+  }
+
+// Function to load user profile data
+async function loadProfileData() {
+try {
+// Show loading spinner
+const profileContainer = document.getElementById("profile-container");
+if (profileContainer) {
+profileContainer.innerHTML =
+'<div class="loading-spinner">Loading your profile...</div>';
+}
+
+      // Get current user data
+      const userData = await apiModule.userService.getCurrentUser();
+
+      // Display user data
+      displayProfileData(userData);
+    } catch (error) {
+      console.error("Error loading profile data:", error);
+      showProfileError("Failed to load your profile data. " + error.message);
+    }
+
+}
+
+// Function to display user profile data
+function displayProfileData(userData) {
+const profileContainer = document.getElementById("profile-container");
+
+    if (!profileContainer) {
+      console.error("Profile container not found");
+      return;
+    }
+
+    // Create profile form
+    profileContainer.innerHTML = `
+      <div class="profile-section">
+        <h2>My Profile</h2>
+        <form id="profile-form" class="profile-form">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" class="form-control" value="${
+              userData.username
+            }" readonly>
+            <small class="form-text text-muted">Username cannot be changed</small>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" class="form-control" value="${
+              userData.email
+            }" required>
+          </div>
+
+          <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" name="fullName" class="form-control" value="${
+              userData.fullName || ""
+            }">
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" class="form-control" value="${
+              userData.phone || ""
+            }">
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address</label>
+            <textarea id="address" name="address" class="form-control" rows="3">${
+              userData.address || ""
+            }</textarea>
+          </div>
+
+          <div class="profile-actions">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </form>
+        <div id="profile-success" class="alert alert-success" style="display: none;"></div>
+        <div id="profile-error" class="alert alert-danger" style="display: none;"></div>
+      </div>
+
+      <div class="profile-section">
+        <h2>Change Password</h2>
+        <form id="password-form" class="password-form">
+          <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <input type="password" id="currentPassword" name="currentPassword" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <input type="password" id="newPassword" name="newPassword" class="form-control" required>
+            <small class="form-text text-muted">Password must be at least 8 characters long</small>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirm New Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required>
+          </div>
+
+          <div class="profile-actions">
+            <button type="submit" class="btn btn-primary">Update Password</button>
+          </div>
+        </form>
+        <div id="password-success" class="alert alert-success" style="display: none;"></div>
+        <div id="password-error" class="alert alert-danger" style="display: none;"></div>
+      </div>
+    `;
+
+}
+
+// Function to setup profile form submission
+function setupProfileForm() {
+const profileForm = document.getElementById("profile-form");
+
+    if (!profileForm) {
+      return;
+    }
+
+    profileForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      // Get form data
+      const email = document.getElementById("email").value;
+      const fullName = document.getElementById("fullName").value;
+      const phone = document.getElementById("phone").value;
+      const address = document.getElementById("address").value;
+
+      // Simple email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showProfileError("Please enter a valid email address.");
+        return;
+      }
+
+      try {
+        // Show loading state
+        const submitBtn = profileForm.querySelector("button[type=submit]");
+        submitBtn.disabled = true;
+        submitBtn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+
+        // Get current user
+        const currentUser = await apiModule.userService.getCurrentUser();
+
+        // Prepare updated user data
+        const updatedUser = {
+          ...currentUser,
+          email,
+          fullName,
+          phone,
+          address,
+        };
+
+        // Update user data
+        await apiModule.userService.updateUser(currentUser.id, updatedUser);
+
+        // Show success message
+        showProfileSuccess("Profile updated successfully!");
+
+        // Reset button
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Save Changes";
+      } catch (error) {
+        console.error("Error updating profile:", error);
+
+        // Show error message
+        showProfileError("Failed to update profile: " + error.message);
+
+        // Reset button
+        const submitBtn = profileForm.querySelector("button[type=submit]");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Save Changes";
+      }
+    });
+
+}
+
+// Function to setup password change form
+function setupPasswordForm() {
+const passwordForm = document.getElementById("password-form");
+
+    if (!passwordForm) {
+      return;
+    }
+
+    passwordForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      // Get form data
+      const currentPassword = document.getElementById("currentPassword").value;
+      const newPassword = document.getElementById("newPassword").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+
+      // Validate passwords
+      if (newPassword.length < 8) {
+        showPasswordError("New password must be at least 8 characters long.");
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        showPasswordError("New passwords do not match.");
+        return;
+      }
+
+      try {
+        // Show loading state
+        const submitBtn = passwordForm.querySelector("button[type=submit]");
+        submitBtn.disabled = true;
+        submitBtn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
+
+        // Call API to change password
+        await apiModule.callApi("/users/change-password", "POST", {
+          currentPassword,
+          newPassword,
+        });
+
+        // Show success message
+        showPasswordSuccess("Password changed successfully!");
+
+        // Reset form
+        passwordForm.reset();
+
+        // Reset button
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Update Password";
+      } catch (error) {
+        console.error("Error changing password:", error);
+
+        // Show error message
+        showPasswordError(
+          "Failed to change password. " +
+            (error.message.includes("401")
+              ? "Current password is incorrect."
+              : error.message)
+        );
+
+        // Reset button
+        const submitBtn = passwordForm.querySelector("button[type=submit]");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Update Password";
+      }
+    });
+
+}
+
+// Function to show profile success message
+function showProfileSuccess(message) {
+const successEl = document.getElementById("profile-success");
+const errorEl = document.getElementById("profile-error");
+
+    if (successEl) {
+      successEl.textContent = message;
+      successEl.style.display = "block";
+
+      // Hide after 5 seconds
+      setTimeout(() => {
+        successEl.style.display = "none";
+      }, 5000);
+    }
+
+    if (errorEl) {
+      errorEl.style.display = "none";
+    }
+
+}
+
+// Function to show profile error message
+function showProfileError(message) {
+const errorEl = document.getElementById("profile-error");
+const successEl = document.getElementById("profile-success");
+
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.style.display = "block";
+    }
+
+    if (successEl) {
+      successEl.style.display = "none";
+    }
+
+}
+
+// Function to show password success message
+function showPasswordSuccess(message) {
+const successEl = document.getElementById("password-success");
+const errorEl = document.getElementById("password-error");
+
+    if (successEl) {
+      successEl.textContent = message;
+      successEl.style.display = "block";
+
+      // Hide after 5 seconds
+      setTimeout(() => {
+        successEl.style.display = "none";
+      }, 5000);
+    }
+
+    if (errorEl) {
+      errorEl.style.display = "none";
+    }
+
+}
+
+// Function to show password error message
+function showPasswordError(message) {
+const errorEl = document.getElementById("password-error");
+const successEl = document.getElementById("password-success");
+
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.style.display = "block";
+    }
+
+    if (successEl) {
+      successEl.style.display = "none";
+    }
+
+}
+
+// Return public methods
+return {
+setupProfilePage,
+loadProfileData,
+};
+})();
+
+// Export module for use in other scripts
+window.userModule = userModule;
+
+js/utils.js:
+/\*\*
+
+- Utility Functions for Car Rental Application
+- Common helper functions used across the application
+  \*/
+  const utils = (function () {
+  // Debug flag
+  const DEBUG = true;
+
+// Debug log helper
+function log(message, data) {
+if (DEBUG) {
+console.log(`[Utils] ${message}`);
+if (data !== undefined) console.log(data);
+}
+}
+
+// Format date for display (e.g., "2023-05-15" to "May 15, 2023")
+function formatDate(dateString) {
+if (!dateString) return "";
+const date = new Date(dateString);
+return date.toLocaleDateString("en-US", {
+year: "numeric",
+month: "long",
+day: "numeric",
+});
+}
+
+// Format price for display (e.g., 1000 to "1,000 kr")
+function formatPrice(price) {
+if (typeof price !== "number") return "";
+return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " kr";
+}
+
+// Truncate text with ellipsis
+function truncateText(text, maxLength = 100) {
+if (!text) return "";
+if (text.length <= maxLength) return text;
+return text.substring(0, maxLength) + "...";
+}
+
+// Get URL parameters as an object
+function getUrlParams() {
+const params = {};
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+
+    for (const [key, value] of urlParams.entries()) {
+      params[key] = value;
+    }
+
+    return params;
+
+}
+
+// Get a specific URL parameter by name
+function getUrlParam(name) {
+const urlParams = new URLSearchParams(window.location.search);
+return urlParams.get(name);
+}
+
+// Format date to YYYY-MM-DD for input fields
+function formatDateForInput(date) {
+if (!date) return "";
+if (typeof date === "string") date = new Date(date);
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+
+}
+
+// Calculate days between two dates
+function daysBetween(startDate, endDate) {
+const start = new Date(startDate);
+const end = new Date(endDate);
+const diffTime = Math.abs(end - start);
+const diffDays = Math.ceil(diffTime / (1000 _ 60 _ 60 \* 24));
+return diffDays;
+}
+
+// Validate email format
+function isValidEmail(email) {
+const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+return re.test(email);
+}
+
+// Validate password strength (at least 8 chars, with numbers and letters)
+function isStrongPassword(password) {
+return (
+password.length >= 8 &&
+/[A-Za-z]/.test(password) &&
+/[0-9]/.test(password)
+);
+}
+
+// Set a cookie
+function setCookie(name, value, days) {
+let expires = "";
+if (days) {
+const date = new Date();
+date.setTime(date.getTime() + days _ 24 _ 60 _ 60 _ 1000);
+expires = "; expires=" + date.toUTCString();
+}
+document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+// Get a cookie by name
+function getCookie(name) {
+const nameEQ = name + "=";
+const ca = document.cookie.split(";");
+for (let i = 0; i < ca.length; i++) {
+let c = ca[i];
+while (c.charAt(0) === " ") c = c.substring(1, c.length);
+if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+}
+return null;
+}
+
+// Delete a cookie
+function eraseCookie(name) {
+document.cookie = name + "=; Max-Age=-99999999; path=/";
+}
+
+// Debounce function to limit how often a function can run
+function debounce(func, wait) {
+let timeout;
+return function (...args) {
+const context = this;
+clearTimeout(timeout);
+timeout = setTimeout(() => func.apply(context, args), wait);
+};
+}
+
+// Show notification
+function showNotification(message, type = "info", duration = 3000) {
+log(`Showing notification: ${message} (${type})`);
+
+    // Create notification container if it doesn't exist
+    let container = document.querySelector(".notification-container");
+    if (!container) {
+      container = document.createElement("div");
+      container.className = "notification-container";
+      document.body.appendChild(container);
+    }
+
+    // Create notification element
+    const notification = document.createElement("div");
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+
+    // Add to container
+    container.appendChild(notification);
+
+    // Show with animation
+    setTimeout(() => {
+      notification.classList.add("show");
+    }, 10);
+
+    // Remove after duration
+    setTimeout(() => {
+      notification.classList.remove("show");
+      setTimeout(() => {
+        notification.remove();
+      }, 300);
+    }, duration);
+
+}
+
+// Initialize utils module
+function init() {
+log("Utils module initialized");
+}
+
+// Return public methods
+return {
+init,
+log,
+formatDate,
+formatPrice,
+truncateText,
+getUrlParams,
+getUrlParam,
+formatDateForInput,
+daysBetween,
+isValidEmail,
+isStrongPassword,
+setCookie,
+getCookie,
+eraseCookie,
+debounce,
+showNotification,
+};
+})();
+
+// Initialize the utils module when DOM is fully loaded
+document.addEventListener("DOMContentLoaded", function () {
+utils.init();
+});
+
+// Export the module for use in other scripts
+window.utils = utils;
+
+styles/styles.css:
+/_ Base Variables with New Color Scheme _/
+:root {
+--light-blue-gray: #9fb2b7;
+--medium-gray: #556568;
+--slate-blue: #738a8f;
+--steel-blue: #687b84;
+--dark-slate: #364c50;
+--pale-blue: #d5e5ea;
+--near-black: #2b2b2a;
+--true-black: #161616;
+--dark-teal: #192728;
+--warm-taupe: #938678;
+--navy-blue: #293b44;
+--pure-black: #040404;
+--pure-white: #ffffff;
+
+--text-dark: #161616;
+--text-medium: #556568;
+--text-light: #d5e5ea;
+
+--primary-color: #364c50; /_ dark slate _/
+--secondary-color: #738a8f; /_ slate blue _/
+--accent-color: #9fb2b7; /_ light blue gray _/
+--light-color: #d5e5ea; /_ pale blue _/
+--dark-color: #293b44; /_ navy blue _/
+--highlight-color: #938678; /_ warm taupe _/
+--background-color: #d5e5ea; /_ pale blue _/
+
+/_ Responsive spacing _/
+--space-xxs: 0.25rem;
+--space-xs: 0.5rem;
+--space-sm: 0.75rem;
+--space-md: 1rem;
+--space-lg: 1.5rem;
+--space-xl: 2rem;
+--space-xxl: 3rem;
+
+/_ Responsive typography _/
+--font-size-sm: clamp(0.8rem, 0.17vw + 0.76rem, 0.89rem);
+--font-size-base: clamp(1rem, 0.34vw + 0.91rem, 1.19rem);
+--font-size-md: clamp(1.25rem, 0.61vw + 1.1rem, 1.58rem);
+--font-size-lg: clamp(1.56rem, 1vw + 1.31rem, 2.11rem);
+--font-size-xl: clamp(1.95rem, 1.56vw + 1.56rem, 2.81rem);
+
+/_ Layout variables _/
+--sidebar-width: clamp(16rem, 25vw, 20rem);
+--sidebar-collapsed-width: 4.5rem;
+--transition-speed: 0.3s;
+--border-radius: 0.25rem;
+--box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.1);
+}
+
+/_ Global Styles _/
+
+- {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  }
+
+html {
+font-size: 100%; /_ 16px base for rem units _/
+scroll-behavior: smooth;
+}
+
+body {
+font-family: "Poppins", sans-serif;
+line-height: 1.6;
+color: var(--text-dark);
+background-color: var(--background-color);
+overflow-x: hidden;
+min-height: 100vh;
+}
+
+/_ Typography with fluid sizing _/
+h1 {
+font-size: var(--font-size-xl);
+margin-bottom: var(--space-md);
+}
+
+h2 {
+font-size: var(--font-size-lg);
+margin-bottom: var(--space-md);
+}
+
+h3 {
+font-size: var(--font-size-md);
+margin-bottom: var(--space-sm);
+}
+
+p,
+li {
+font-size: var(--font-size-base);
+}
+
+small {
+font-size: var(--font-size-sm);
+}
+
+/_ App Container Layout _/
+.app-container {
+display: flex;
+min-height: 100vh;
+position: relative;
+}
+
+/_ Hamburger Menu Toggle _/
+.menu-toggle {
+position: fixed;
+top: var(--space-md);
+left: var(--space-md);
+z-index: 200;
+background-color: var(--primary-color);
+color: var(--pure-white);
+border: none;
+border-radius: 50%;
+width: 3rem;
+height: 3rem;
+display: none; /_ Hidden by default, shown in media query _/
+align-items: center;
+justify-content: center;
+cursor: pointer;
+box-shadow: var(--box-shadow);
+}
+
+.menu-toggle span,
+.menu-toggle span::before,
+.menu-toggle span::after {
+display: block;
+background-color: var(--pure-white);
+height: 2px;
+width: 1.5rem;
+position: relative;
+transition: all var(--transition-speed) ease;
+}
+
+.menu-toggle span::before,
+.menu-toggle span::after {
+content: "";
+position: absolute;
+}
+
+.menu-toggle span::before {
+bottom: 0.5rem;
+}
+
+.menu-toggle span::after {
+top: 0.5rem;
+}
+
+/_ Hamburger menu animation _/
+.menu-toggle.active span {
+background-color: transparent;
+}
+
+.menu-toggle.active span::before {
+transform: rotate(-45deg);
+bottom: 0;
+}
+
+.menu-toggle.active span::after {
+transform: rotate(45deg);
+top: 0;
+}
+
+/_ Sidebar Styles - Enhanced with responsive behavior _/
+.sidebar {
+width: var(--sidebar-width);
+background-color: var(--primary-color);
+color: var(--text-light);
+height: 100vh;
+position: fixed;
+left: 0;
+top: 0;
+display: flex;
+flex-direction: column;
+box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+transition: transform var(--transition-speed) ease;
+z-index: 100;
+overflow-y: auto;
+overscroll-behavior: contain; /_ Prevents scroll chaining _/
+}
+
+.sidebar-header {
+display: flex;
+align-items: center;
+justify-content: center;
+padding: var(--space-sm);
+background-color: var(--pure-white);
+border-bottom: 1px solid var(--accent-color);
+min-height: 4rem;
+}
+
+.sidebar-logo {
+width: 100%;
+max-width: 8rem;
+height: auto;
+object-fit: contain;
+background-color: var(--pure-white);
+border-radius: var(--border-radius);
+}
+
+.sidebar-nav {
+flex: 1;
+padding: var(--space-lg) 0;
+overflow-y: auto;
+background-color: var(--primary-color);
+}
+
+.nav-links {
+list-style: none;
+}
+
+.nav-item {
+margin-bottom: var(--space-xs);
+}
+
+.nav-link {
+display: flex;
+align-items: center;
+padding: var(--space-md) var(--space-lg);
+color: var(--text-light);
+text-decoration: none;
+font-weight: 500;
+transition: background-color var(--transition-speed),
+color var(--transition-speed);
+border-left: 4px solid transparent;
+}
+
+.nav-icon {
+margin-right: var(--space-md);
+font-size: 1.2rem;
+min-width: 1.5rem; /_ Ensures icon alignment when text is hidden _/
+text-align: center;
+}
+
+.nav-text {
+transition: opacity var(--transition-speed) ease;
+}
+
+.nav-link:hover {
+background-color: var(--dark-slate);
+border-left-color: var(--highlight-color);
+}
+
+.nav-link.active {
+background-color: var(--medium-gray);
+border-left-color: var(--highlight-color);
+color: var(--pure-white);
+}
+
+.sidebar-footer {
+padding: var(--space-lg);
+border-top: 1px solid rgba(255, 255, 255, 0.1);
+background-color: var(--dark-slate);
+}
+
+.user-welcome {
+margin-bottom: var(--space-md);
+font-size: var(--font-size-sm);
+color: var(--light-color);
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.logout-link {
+display: inline-block;
+padding: var(--space-xs) var(--space-md);
+background-color: var(--secondary-color);
+color: var(--pure-white);
+text-decoration: none;
+border-radius: var(--border-radius);
+font-size: var(--font-size-sm);
+transition: background-color var(--transition-speed);
+text-align: center;
+width: 100%;
+}
+
+.logout-link:hover {
+background-color: var(--accent-color);
+color: var(--dark-color);
+}
+
+/_ Content Area _/
+.content-wrapper {
+flex: 1;
+margin-left: var(--sidebar-width);
+transition: margin-left var(--transition-speed) ease;
+display: flex;
+flex-direction: column;
+min-height: 100vh;
+width: calc(100% - var(--sidebar-width));
+}
+
+.main-content {
+flex: 1;
+padding: var(--space-lg);
+background-color: var(--pure-white);
+}
+
+/_ Content Container - where page content loads _/
+#content-container {
+width: 100%;
+max-width: 75rem; /_ 1200px equivalent _/
+margin: 0 auto;
+padding: 0 var(--space-md);
+}
+
+/_ Car Grid Layout - Using CSS Grid _/
+.cars-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
+gap: var(--space-lg);
+margin: var(--space-lg) 0;
+}
+
+/_ Car Card Styling _/
+.car-card {
+background-color: var(--pure-white);
+border-radius: var(--border-radius);
+overflow: hidden;
+box-shadow: var(--box-shadow);
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+display: flex;
+flex-direction: column;
+height: 100%;
+}
+
+.car-card:hover {
+transform: translateY(-0.3rem);
+box-shadow: 0 0.625rem 1.25rem rgba(0, 0, 0, 0.15);
+}
+
+/_ Car Card Image Styling _/
+.car-image-container {
+min-height: 150px;
+width: 100%;
+display: flex;
+align-items: center;
+justify-content: center;
+background-color: #f1f1f1;
+border-radius: 4px;
+overflow: hidden;
+margin-bottom: 15px;
+}
+
+.car-image {
+max-width: 100%;
+max-height: 200px;
+object-fit: contain;
+}
+
+.no-image-placeholder {
+padding: 20px;
+color: #777;
+font-style: italic;
+text-align: center;
+}
+.car-details {
+padding: var(--space-lg);
+display: flex;
+flex-direction: column;
+flex: 1;
+}
+
+.car-model {
+font-size: var(--font-size-md);
+color: var(--dark-color);
+margin-bottom: var(--space-xs);
+}
+
+.car-price {
+font-size: var(--font-size-md);
+font-weight: 600;
+color: var(--primary-color);
+margin-bottom: var(--space-md);
+}
+
+.car-features {
+list-style: none;
+margin-bottom: var(--space-lg);
+flex: 1;
+}
+
+.car-features li {
+padding: var(--space-xxs) 0;
+color: var(--text-medium);
+position: relative;
+padding-left: 1.5rem;
+font-size: var(--font-size-sm);
+}
+
+.car-features li:before {
+content: "✓";
+position: absolute;
+left: 0;
+color: var(--secondary-color);
+}
+
+.car-status {
+display: inline-block;
+padding: var(--space-xxs) var(--space-sm);
+border-radius: 1rem;
+font-size: var(--font-size-sm);
+font-weight: 500;
+margin-bottom: var(--space-md);
+}
+
+.status-available {
+background-color: rgba(115, 138, 143, 0.2);
+color: var(--dark-slate);
+}
+
+.status-rented {
+background-color: rgba(147, 134, 120, 0.2);
+color: var(--warm-taupe);
+}
+
+.car-actions {
+display: flex;
+gap: var(--space-xs);
+margin-top: auto;
+}
+
+/_ Footer Styling _/
+.footer {
+background-color: var(--dark-color);
+padding: var(--space-lg);
+color: var(--light-color);
+border-top: 1px solid var(--medium-gray);
+}
+
+.footer-content {
+display: flex;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: var(--space-md);
+max-width: 75rem;
+margin: 0 auto;
+}
+
+.copyright,
+.contact {
+font-size: var(--font-size-sm);
+margin: var(--space-xs) 0;
+}
+
+/_ Loading and Error States _/
+.loading {
+text-align: center;
+padding: var(--space-xl);
+color: var(--text-medium);
+}
+
+.error-container {
+text-align: center;
+padding: var(--space-xl);
+background-color: rgba(54, 76, 80, 0.1);
+border-radius: var(--border-radius);
+border-left: 4px solid var(--primary-color);
+}
+
+/_ Form Styling _/
+.form-container {
+width: 100%;
+max-width: 40rem;
+margin: 0 auto;
+padding: var(--space-xl);
+}
+
+.form-group {
+margin-bottom: var(--space-lg);
+}
+
+.form-label {
+display: block;
+margin-bottom: var(--space-xs);
+font-weight: 500;
+color: var(--text-medium);
+font-size: var(--font-size-sm);
+}
+
+.form-control {
+width: 100%;
+padding: var(--space-md);
+border: 1px solid var(--accent-color);
+border-radius: var(--border-radius);
+font-size: var(--font-size-base);
+transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus {
+border-color: var(--secondary-color);
+outline: none;
+box-shadow: 0 0 0 3px rgba(115, 138, 143, 0.2);
+}
+
+/_ Professional Login Form Styling _/
+.login-section {
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: calc(100vh - 7.5rem);
+padding: var(--space-xl) var(--space-md);
+background-color: var(--pure-white);
+}
+
+.login-container {
+width: 100%;
+max-width: 28rem;
+background-color: var(--pure-white);
+border-radius: 0.625rem;
+box-shadow: 0 0.625rem 2.5rem rgba(0, 0, 0, 0.12);
+padding: clamp(1.5rem, 5vw, 2.5rem);
+transition: transform 0.3s ease;
+}
+
+.login-container:hover {
+transform: translateY(-0.3rem);
+}
+
+.login-header {
+text-align: center;
+margin-bottom: var(--space-xl);
+}
+
+.login-title {
+color: var(--dark-color);
+font-size: var(--font-size-lg);
+font-weight: 700;
+margin-bottom: var(--space-xs);
+letter-spacing: -0.5px;
+}
+
+.login-subtitle {
+color: var(--text-medium);
+font-size: var(--font-size-base);
+}
+
+.login-error-message {
+background-color: rgba(231, 76, 60, 0.1);
+color: #e74c3c;
+padding: var(--space-sm) var(--space-md);
+border-radius: var(--border-radius);
+margin-bottom: var(--space-lg);
+font-size: var(--font-size-sm);
+text-align: center;
+border-left: 4px solid #e74c3c;
+}
+
+.login-form {
+margin-bottom: var(--space-lg);
+}
+
+.form-field-group {
+margin-bottom: var(--space-lg);
+}
+
+.form-field-label {
+display: block;
+margin-bottom: var(--space-xs);
+font-weight: 500;
+color: var(--text-medium);
+font-size: var(--font-size-sm);
+}
+
+.login-field-input,
+.form-field-input {
+width: 100%;
+padding: var(--space-md);
+border: 1px solid rgba(54, 76, 80, 0.2);
+border-radius: var(--border-radius);
+font-size: var(--font-size-base);
+color: var(--text-dark);
+transition: all 0.3s ease;
+background-color: var(--pure-white);
+}
+
+.login-field-input:focus,
+.form-field-input:focus {
+outline: none;
+border-color: var(--secondary-color);
+box-shadow: 0 0 0 3px rgba(115, 138, 143, 0.2);
+}
+
+.login-field-input::placeholder,
+.form-field-input::placeholder {
+color: rgba(85, 101, 104, 0.5);
+}
+
+.login-submit-btn {
+width: 100%;
+padding: var(--space-md) var(--space-lg);
+margin-top: var(--space-md);
+background-color: var(--primary-color);
+color: var(--pure-white);
+font-weight: 600;
+font-size: var(--font-size-base);
+border: none;
+border-radius: var(--border-radius);
+cursor: pointer;
+transition: all 0.3s ease;
+position: relative;
+overflow: hidden;
+box-shadow: 0 0.25rem 0.625rem rgba(0, 0, 0, 0.1);
+}
+
+.login-submit-btn:hover {
+background-color: #2e3f42; /_ Slightly darker than primary color _/
+}
+
+.login-submit-btn::after {
+content: "";
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(255, 255, 255, 0);
+transition: background-color 0.3s ease;
+}
+
+.login-submit-btn:hover::after {
+background-color: rgba(255, 255, 255, 0.1);
+}
+
+.login-submit-btn:active {
+transform: translateY(1px);
+box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.1);
+}
+
+.register-redirect-container {
+text-align: center;
+margin-top: var(--space-lg);
+padding-top: var(--space-lg);
+border-top: 1px solid rgba(54, 76, 80, 0.1);
+}
+
+.register-redirect-link {
+color: var(--secondary-color);
+text-decoration: none;
+font-weight: 500;
+font-size: var(--font-size-sm);
+transition: color 0.3s;
+}
+
+.register-redirect-link:hover {
+color: var(--primary-color);
+text-decoration: underline;
+}
+
+/_ Animation for form elements _/
+@keyframes fadeIn {
+from {
+opacity: 0;
+transform: translateY(0.625rem);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+.login-container {
+animation: fadeIn 0.5s ease forwards;
+}
+
+.form-field-group:nth-child(1) {
+animation: fadeIn 0.5s ease 0.1s forwards;
+opacity: 0;
+}
+
+.form-field-group:nth-child(2) {
+animation: fadeIn 0.5s ease 0.2s forwards;
+opacity: 0;
+}
+
+.login-submit-btn {
+animation: fadeIn 0.5s ease 0.3s forwards;
+opacity: 0;
+}
+
+/_ Button Styles _/
+.btn {
+display: inline-block;
+padding: var(--space-xs) var(--space-md);
+background-color: var(--secondary-color);
+color: var(--pure-white);
+border: none;
+border-radius: var(--border-radius);
+cursor: pointer;
+font-size: var(--font-size-sm);
+font-weight: 500;
+text-decoration: none;
+transition: background-color var(--transition-speed), transform 0.2s ease;
+text-align: center;
+}
+
+.btn:hover {
+background-color: var(--primary-color);
+transform: translateY(-0.125rem);
+}
+
+.btn:active {
+transform: translateY(0);
+}
+
+.btn-primary {
+background-color: var(--primary-color);
+}
+
+.btn-secondary {
+background-color: var(--secondary-color);
+}
+
+.btn-accent {
+background-color: var(--accent-color);
+color: var(--text-dark);
+}
+
+.btn-block {
+display: block;
+width: 100%;
+}
+
+/_ Responsive Design - Mobile First Approach _/
+@media (max-width: 87.5em) {
+/_ 1400px _/
+#content-container {
+padding: 0 var(--space-lg);
+}
+}
+
+@media (max-width: 64em) {
+/_ 1024px _/
+.content-wrapper {
+margin-left: var(--sidebar-collapsed-width);
+width: calc(100% - var(--sidebar-collapsed-width));
+}
+
+.sidebar {
+width: var(--sidebar-collapsed-width);
+}
+
+.nav-text {
+opacity: 0;
+visibility: hidden;
+position: absolute;
+}
+
+.user-welcome {
+display: none;
+}
+
+.sidebar:hover {
+width: var(--sidebar-width);
+}
+
+.sidebar:hover .nav-text {
+opacity: 1;
+visibility: visible;
+position: static;
+}
+
+.sidebar:hover .user-welcome {
+display: block;
+}
+
+.logout-link {
+padding: var(--space-xs);
+overflow: hidden;
+white-space: nowrap;
+}
+
+.sidebar:hover .logout-link {
+padding: var(--space-xs) var(--space-md);
+}
+}
+
+@media (max-width: 48em) {
+/_ 768px _/
+.menu-toggle {
+display: flex;
+}
+
+.sidebar {
+transform: translateX(-100%);
+width: min(var(--sidebar-width), 80vw);
+}
+
+.sidebar.active {
+transform: translateX(0);
+}
+
+.content-wrapper {
+margin-left: 0;
+width: 100%;
+}
+
+.nav-text {
+opacity: 1;
+visibility: visible;
+position: static;
+}
+
+.user-welcome {
+display: block;
+}
+
+.footer-content {
+flex-direction: column;
+align-items: center;
+text-align: center;
+}
+
+.cars-grid {
+grid-template-columns: repeat(auto-fill, minmax(min(20rem, 100%), 1fr));
+}
+}
+
+@media (max-width: 36em) {
+/_ 576px _/
+.main-content {
+padding: var(--space-md);
+}
+
+#content-container {
+padding: 0 var(--space-sm);
+}
+
+.cars-grid {
+gap: var(--space-md);
+}
+
+.login-container {
+padding: var(--space-lg);
+}
+
+.car-details {
+padding: var(--space-md);
+}
+}
+
+/_ Add body class for when sidebar is open on mobile to prevent scrolling _/
+body.sidebar-open {
+overflow: hidden;
+}
+
+/_ Overlay when sidebar is active on mobile _/
+.sidebar-overlay {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.5);
+z-index: 90;
+opacity: 0;
+visibility: hidden;
+transition: opacity var(--transition-speed) ease;
+}
+
+.sidebar-overlay.active {
+opacity: 1;
+visibility: visible;
+}

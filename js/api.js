@@ -542,5 +542,68 @@ document.addEventListener("DOMContentLoaded", function () {
   apiModule.init();
 });
 
+// Add this function at the end of your rental.js file
+function debugCarImage() {
+  console.log("Starting car image debug...");
+
+  // Get cars from the API
+  carService
+    .getAllCars()
+    .then((cars) => {
+      console.log(`Retrieved ${cars.length} cars`);
+
+      if (cars.length === 0) {
+        console.log("No cars found to debug");
+        return;
+      }
+
+      // Examine the first car
+      const car = cars[0];
+      console.log("First car:", car);
+
+      // Check for image data
+      if (!car.image) {
+        console.log("This car has no image data");
+        return;
+      }
+
+      // Check image data type
+      console.log("Image data type:", typeof car.image);
+
+      // If it's an object, examine structure
+      if (typeof car.image === "object") {
+        // Check if it's an array
+        if (Array.isArray(car.image)) {
+          console.log("Image is an array with length:", car.image.length);
+          if (car.image.length > 0) {
+            console.log("First few values:", car.image.slice(0, 10));
+          }
+        } else {
+          // It's a non-array object
+          console.log("Image keys:", Object.keys(car.image));
+          const values = Object.values(car.image);
+          console.log("Image values length:", values.length);
+          if (values.length > 0) {
+            console.log("First few values:", values.slice(0, 10));
+          }
+        }
+      }
+
+      // If it's a string, check format
+      if (typeof car.image === "string") {
+        console.log("Image string length:", car.image.length);
+        console.log("Image string starts with:", car.image.substring(0, 50));
+      }
+
+      console.log("Debug complete");
+    })
+    .catch((error) => {
+      console.error("Error debugging car image:", error);
+    });
+}
+
+// Make it available globally
+window.debugCarImage = debugCarImage;
+
 // Export module for use in other scripts
 window.apiModule = apiModule;

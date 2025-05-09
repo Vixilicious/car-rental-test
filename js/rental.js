@@ -17,6 +17,30 @@ const rentalModule = (function () {
     }
   }
 
+  async function fetchCarDetails() {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/v1/cars/${carId}`
+      );
+      if (!response.ok) throw new Error("Car not found");
+      const car = await response.json();
+      displayCarDetails(car);
+    } catch (err) {
+      console.error("Error fetching car:", err);
+    }
+  }
+
+  function displayCarDetails(car) {
+    const image = document.querySelector("#car-image");
+    const name = document.querySelector("#car-name");
+    const model = document.querySelector("#car-model");
+
+    image.src = getImageUrl(car.image);
+    name.textContent = car.name;
+    model.textContent = car.model;
+    // ... add other fields as needed
+  }
+
   // Setup car list
   function setupCarList() {
     log("Setting up car list");
@@ -90,6 +114,7 @@ const rentalModule = (function () {
   }
 
   // Create a car card element
+  // Create a car card element
   function createCarCard(car) {
     log("Creating car card for:", car);
 
@@ -99,51 +124,80 @@ const rentalModule = (function () {
     card.dataset.carId = car.id;
     card.dataset.carType = car.type?.toLowerCase() || "";
 
-    // Determine image source
-    let imgSrc = "images/cars/default-car.jpg"; // Default image
-    if (car.image) {
-      // If the image is a base64 string
-      if (typeof car.image === "string" && car.image.startsWith("data:image")) {
-        imgSrc = car.image;
-      }
-      // If the image is a byte array, convert to base64
-      else if (car.image instanceof Array) {
-        const byteArray = new Uint8Array(car.image);
-        let binary = "";
-        byteArray.forEach((byte) => (binary += String.fromCharCode(byte)));
+    // Handle image properly - NO default paths!
+    let imageElement = "";
 
-        imgSrc = "data:image/jpeg;base64," + btoa(binary);
+    try {
+      if (car.image) {
+        log(`Car ${car.id}: Processing image data`);
+
+        // Handle byte array from database (most likely your format)
+        if (typeof car.image === "object") {
+          try {
+            // Convert from various array formats to a Uint8Array
+            let byteArray;
+
+            if (Array.isArray(car.image)) {
+              byteArray = new Uint8Array(car.image);
+            } else {
+              // Handle JSON object format
+              byteArray = new Uint8Array(Object.values(car.image));
+            }
+
+            // Convert byte array to base64
+            let binary = "";
+            for (let i = 0; i < byteArray.byteLength; i++) {
+              binary += String.fromCharCode(byteArray[i]);
+            }
+
+            const base64Image = btoa(binary);
+            imageElement = `<img src="data:image/jpeg;base64,${base64Image}" 
+                              alt="${car.name || ""} ${car.model || ""}" 
+                              class="car-image">`;
+          } catch (error) {
+            log(`Error converting image data: ${error.message}`);
+            // If conversion fails, use a placeholder div instead of an image path
+            imageElement = `<div class="no-image-placeholder">No image available</div>`;
+          }
+        }
+        // Handle string image data (less likely but possible)
+        else if (typeof car.image === "string") {
+          imageElement = `<img src="${car.image}" 
+                            alt="${car.name || ""} ${car.model || ""}" 
+                            class="car-image">`;
+        }
+      } else {
+        // No image data at all
+        imageElement = `<div class="no-image-placeholder">No image available</div>`;
       }
+    } catch (error) {
+      log(`Error processing image: ${error.message}`);
+      // If any error occurs, use a placeholder div
+      imageElement = `<div class="no-image-placeholder">No image available</div>`;
     }
 
     // Populate card content
     card.innerHTML = `
-      <div class="car-image-container">
-        <img src="${imgSrc}" alt="${car.name} ${car.model}" class="car-image" />
+    <div class="car-image-container">
+      ${imageElement}
+    </div>
+    <div class="car-details">
+      <h2 class="car-name">${car.name || "Unknown"}</h2>
+      <h3 class="car-model">${car.model || ""}</h3>
+      <p class="car-type">${car.type || "Other"}</p>
+      <ul class="car-features">
+        <li class="car-feature1">${car.feature1 || "Feature not available"}</li>
+        <li class="car-feature2">${car.feature2 || "Feature not available"}</li>
+        <li class="car-feature3">${car.feature3 || "Feature not available"}</li>
+      </ul>
+      <div class="car-pricing">
+        <p class="car-price">${car.price}:- per day</p>
+        <button class="btn rent-button" data-car-id="${car.id}">
+          ${car.booked ? "Currently Unavailable" : "Rent Now"}
+        </button>
       </div>
-      <div class="car-details">
-        <h2 class="car-name">${car.name || "Unknown"}</h2>
-        <h3 class="car-model">${car.model || ""}</h3>
-        <p class="car-type">${car.type || "Other"}</p>
-        <ul class="car-features">
-          <li class="car-feature1">${
-            car.feature1 || "Feature not available"
-          }</li>
-          <li class="car-feature2">${
-            car.feature2 || "Feature not available"
-          }</li>
-          <li class="car-feature3">${
-            car.feature3 || "Feature not available"
-          }</li>
-        </ul>
-        <div class="car-pricing">
-          <p class="car-price">${car.price}:- per day</p>
-          <button class="btn rent-button" data-car-id="${car.id}">
-            ${car.booked ? "Currently Unavailable" : "Rent Now"}
-          </button>
-        </div>
-      </div>
-    `;
+    </div>
+  `;
 
     // Disable button if car is booked
     if (car.booked) {
@@ -156,7 +210,6 @@ const rentalModule = (function () {
 
     return card;
   }
-
   // Setup search functionality
   function setupSearch() {
     log("Setting up search functionality");
@@ -542,123 +595,6 @@ const rentalModule = (function () {
       const rentalCard = createRentalCard(booking);
       rentalsList.appendChild(rentalCard);
     });
-  }
-
-  // Function to create a rental card element for history
-  function createRentalCard(booking) {
-    const card = document.createElement("div");
-    card.className = "rental-card";
-    card.setAttribute("data-booking-id", booking.id);
-
-    // Calculate dates and status
-    const now = new Date();
-    const startDate = new Date(booking.startDate);
-    const endDate = new Date(booking.endDate);
-
-    let status = "upcoming";
-    let statusText = "Upcoming";
-
-    if (startDate <= now && endDate >= now) {
-      status = "active";
-      statusText = "Active";
-    } else if (endDate < now) {
-      status = "completed";
-      statusText = "Completed";
-    }
-
-    // Calculate duration and total cost
-    const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
-    let totalCost = 0;
-
-    if (booking.car && booking.car.pricePerDay) {
-      totalCost = booking.car.pricePerDay * days;
-    }
-
-    // Default image if car data is missing
-    const imageUrl =
-      booking.car && booking.car.imageUrl
-        ? booking.car.imageUrl
-        : "images/default-car.jpg";
-    const carName = booking.car
-      ? `${booking.car.make} ${booking.car.model}`
-      : "Car details unavailable";
-
-    card.innerHTML = `
-      <div class="rental-header">
-        <div class="rental-status">
-          <span class="status-badge status-${status}">${statusText}</span>
-        </div>
-        <div class="rental-id">
-          Booking #${booking.id}
-        </div>
-      </div>
-      <div class="rental-content">
-        <div class="rental-car">
-          <div class="rental-car-image">
-            <img src="${imageUrl}" alt="${carName}">
-          </div>
-          <div class="rental-car-info">
-            <h3>${carName}</h3>
-            ${booking.car ? `<p class="car-year">${booking.car.year}</p>` : ""}
-          </div>
-        </div>
-        <div class="rental-details">
-          <div class="rental-dates">
-            <div class="date-item">
-              <span class="date-label">From:</span>
-              <span class="date-value">${formatDate(booking.startDate)}</span>
-            </div>
-            <div class="date-item">
-              <span class="date-label">To:</span>
-              <span class="date-value">${formatDate(booking.endDate)}</span>
-            </div>
-            <div class="date-item">
-              <span class="date-label">Duration:</span>
-              <span class="date-value">${days} day${days > 1 ? "s" : ""}</span>
-            </div>
-          </div>
-          <div class="rental-cost">
-            <span class="cost-label">Total Cost:</span>
-            <span class="cost-value">${formatPrice(totalCost)}</span>
-          </div>
-        </div>
-      </div>
-      <div class="rental-actions">
-        <button class="btn btn-primary view-rental-btn">View Details</button>
-        ${
-          status === "upcoming"
-            ? '<button class="btn btn-danger cancel-rental-btn">Cancel Booking</button>'
-            : ""
-        }
-        ${
-          status === "active"
-            ? '<button class="btn btn-info extend-rental-btn">Extend Rental</button>'
-            : ""
-        }
-      </div>
-    `;
-
-    // Add event listeners
-    const viewBtn = card.querySelector(".view-rental-btn");
-    viewBtn.addEventListener("click", function () {
-      showRentalDetails(booking);
-    });
-
-    const cancelBtn = card.querySelector(".cancel-rental-btn");
-    if (cancelBtn) {
-      cancelBtn.addEventListener("click", function () {
-        confirmCancelRental(booking.id);
-      });
-    }
-
-    const extendBtn = card.querySelector(".extend-rental-btn");
-    if (extendBtn) {
-      extendBtn.addEventListener("click", function () {
-        showExtendRentalModal(booking);
-      });
-    }
-
-    return card;
   }
 
   // Function to show error message
